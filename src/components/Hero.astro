@@ -152,9 +152,22 @@ import Navbar from './Navbar.astro';
     position: absolute;
     right: -2%;
     bottom: -4%;
-    width: clamp(320px, min(52vw, 84vh), 780px);
+    width: clamp(320px, 52%, 780px);
     z-index: 4;
     pointer-events: none;
+  }
+
+  /* Laptop panels (roughly 1280-2200px) hit the same near-max font sizes
+     as a large external desktop monitor, but on a physically smaller
+     screen that reads as oversized/bulky. Trim it back a bit in just this
+     band; wider desktop monitors and the tablet/mobile ranges below are
+     untouched. */
+  @media (min-width: 1280px) and (max-width: 2200px) {
+    .hero__eyebrow { font-size: 26px; }
+    .hero__headline { font-size: 54px; }
+    .hero__desc { font-size: 15px; }
+    .hero__stat-value { font-size: 24px; }
+    .hero__stat-label { font-size: 12px; }
   }
 
   @media (max-width: 680px) {
