@@ -1,0 +1,195 @@
+---
+import Navbar from './Navbar.astro';
+---
+<section class="hero">
+  <div class="hero__blob-top" aria-hidden="true"></div>
+  <div class="hero__blob-bottom"></div>
+
+  <Navbar />
+
+  <div class="hero__content">
+    <span class="hero__eyebrow">Vuela como un canario</span>
+    <h1 class="hero__headline">Silencioso.<br />Suave. Libre.</h1>
+    <p class="hero__desc">Vehículos eléctricos nuevos y automáticos, con un modelo en el que el conductor termina siendo dueño.</p>
+    <a class="btn btn--primary btn--lg hero__cta" href="#socio">Quiero mi e-VIR</a>
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat-value">25</span>
+        <span class="hero__stat-label">Meta flota 2026</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-value">200</span>
+        <span class="hero__stat-label">Meta flota 2027</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-value">4</span>
+        <span class="hero__stat-label">Países</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-value">$0</span>
+        <span class="hero__stat-label">Cuota inicial</span>
+      </div>
+    </div>
+  </div>
+
+  <img class="hero__car" src="/assets/carro-verde.png" alt="e-VIR JMEV 2 — vehículo eléctrico" />
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 560px;
+    height: min(86vh, 800px);
+    overflow: hidden;
+    background: var(--surface-ink);
+  }
+
+  .hero__blob-top {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: clamp(130px, 12.5vw, 190px);
+    height: clamp(96px, 9vw, 138px);
+    background: var(--surface-lime);
+    border-radius: 0 0 100% 0;
+    z-index: 2;
+  }
+
+  .hero__blob-bottom {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 11%;
+    height: 13%;
+    min-width: 60px;
+    min-height: 60px;
+    background: var(--surface-lime);
+    border-radius: 0 100% 0 0;
+    z-index: 3;
+  }
+
+  .hero__content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: min(560px, 54%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(10px, 1.2vw, 18px);
+    padding: clamp(90px, 10vw, 150px) clamp(16px, 2vw, 36px) clamp(48px, 6vw, 88px) clamp(28px, 3.2vw, 56px);
+  }
+
+  .hero__eyebrow {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: var(--fw-bold);
+    font-size: clamp(18px, 2.3vw, 32px);
+    line-height: 1;
+    color: var(--evir-lime-400);
+  }
+
+  .hero__headline {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--fw-extrabold);
+    font-size: clamp(34px, 4.6vw, 64px);
+    line-height: var(--lh-display);
+    letter-spacing: var(--ls-display);
+    color: var(--text-inverse);
+  }
+
+  .hero__desc {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: clamp(13px, 1.1vw, 17px);
+    line-height: var(--lh-body);
+    color: var(--text-inverse-muted);
+    max-width: 30em;
+  }
+
+  .hero__cta { align-self: flex-start; margin-top: clamp(4px, .6vw, 10px); }
+
+  .hero__stats {
+    display: flex;
+    gap: clamp(14px, 1.6vw, 26px);
+    margin-top: clamp(10px, 1.4vw, 24px);
+    flex-wrap: nowrap;
+  }
+
+  .hero__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-right: clamp(14px, 1.6vw, 26px);
+    border-right: 1px solid var(--border-inverse);
+    flex: 0 0 auto;
+  }
+  .hero__stat:last-child { border-right: none; padding-right: 0; }
+
+  .hero__stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 1.9vw, 28px);
+    font-weight: var(--fw-extrabold);
+    color: var(--text-inverse);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .hero__stat-label {
+    font-family: var(--font-sans);
+    font-size: clamp(10px, .85vw, 13px);
+    font-weight: var(--fw-semibold);
+    color: var(--text-inverse-muted);
+    white-space: nowrap;
+  }
+
+  .hero__car {
+    position: absolute;
+    right: -2%;
+    bottom: -4%;
+    width: clamp(320px, 52%, 780px);
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  @media (max-width: 680px) {
+    .hero {
+      height: auto;
+      min-height: 100vh;
+      padding-bottom: var(--space-9);
+    }
+
+    .hero__content {
+      position: relative;
+      width: auto;
+      height: auto;
+      padding: 96px var(--gutter-inline) 0;
+    }
+
+    .hero__stats {
+      flex-wrap: wrap;
+      gap: 16px 24px;
+    }
+    .hero__stat {
+      min-width: 42%;
+      border-right: none;
+      padding-right: 0;
+    }
+    .hero__stat:nth-child(odd) {
+      border-right: 1px solid var(--border-inverse);
+      padding-right: 16px;
+    }
+
+    .hero__car {
+      position: relative;
+      inset: auto;
+      display: block;
+      width: min(420px, 92%);
+      margin: 32px auto 0;
+    }
+  }
+</style>
