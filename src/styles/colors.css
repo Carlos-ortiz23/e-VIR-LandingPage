@@ -1,0 +1,71 @@
+:root{
+/* ---- Base palette: brand ---- */
+--evir-lime-50:#f4fde1;--evir-lime-100:#e6fbb9;--evir-lime-200:#d4f68a;--evir-lime-300:#c2f05c;
+--evir-lime-400:#ace830;--evir-lime-500:#93cf1c;--evir-lime-600:#75a915;--evir-lime-700:#587f12;--evir-lime-800:#3c580f;
+--evir-navy-50:#f2f5f9;--evir-navy-100:#e2e8f0;--evir-navy-200:#c6d1e0;--evir-navy-300:#93a4bd;
+--evir-navy-400:#5a6d8a;--evir-navy-500:#394961;--evir-navy-600:#2b3a50;--evir-navy-700:#1e2c40;
+--evir-navy-800:#152535;--evir-navy-900:#0e1a28;--evir-navy-950:#0b1024;
+
+/* ---- Base palette: neutrals ---- */
+--evir-white:#ffffff;--evir-paper:#fbfcfa;--evir-gray-50:#f6f7f5;--evir-gray-100:#eef0ec;
+--evir-gray-200:#e0e3de;--evir-gray-300:#c7cbc4;--evir-gray-400:#9aa196;--evir-gray-500:#71786d;
+--evir-gray-600:#525950;--evir-gray-700:#3a403a;--evir-gray-800:#252a25;--evir-black:#0a0d0a;
+
+/* ---- Base palette: support & semantic hues ---- */
+--evir-sky-400:#3fb6f2;--evir-sky-500:#1f96d4;--evir-sky-100:#dcf1fd;
+--evir-amber-400:#f5b93d;--evir-amber-500:#d99512;--evir-amber-100:#fdf1d8;
+--evir-coral-400:#f4644f;--evir-coral-500:#d94331;--evir-coral-100:#fde3df;
+--evir-mint-400:#2fc38a;--evir-mint-500:#17a06d;--evir-mint-100:#d9f6ea;
+
+/* ---- Semantic: text ---- */
+--text-strong:var(--evir-navy-950);
+--text-body:var(--evir-navy-800);
+--text-muted:var(--evir-navy-400);
+--text-subtle:var(--evir-navy-300);
+--text-inverse:var(--evir-white);
+--text-inverse-muted:#a9b6c6;
+--text-brand:var(--evir-lime-700);
+--text-link:var(--evir-navy-950);
+--text-link-hover:var(--evir-lime-700);
+--text-on-lime:var(--evir-navy-950);
+
+/* ---- Semantic: surfaces ---- */
+--surface-page:var(--evir-paper);
+--surface-card:var(--evir-white);
+--surface-sunken:var(--evir-gray-50);
+--surface-muted:var(--evir-gray-100);
+--surface-ink:var(--evir-navy-950);
+--surface-ink-raised:var(--evir-navy-800);
+--surface-ink-hover:var(--evir-navy-700);
+--surface-lime:var(--evir-lime-400);
+--surface-lime-soft:var(--evir-lime-100);
+--surface-overlay:rgba(11,16,36,.62);
+
+/* ---- Semantic: borders ---- */
+--border-subtle:var(--evir-gray-200);
+--border-default:var(--evir-gray-300);
+--border-strong:var(--evir-navy-950);
+--border-inverse:rgba(255,255,255,.14);
+--border-lime:var(--evir-lime-400);
+--focus-ring:var(--evir-lime-400);
+
+/* ---- Semantic: actions ---- */
+--action-primary-bg:var(--evir-lime-400);
+--action-primary-bg-hover:var(--evir-lime-300);
+--action-primary-bg-active:var(--evir-lime-500);
+--action-primary-fg:var(--evir-navy-950);
+--action-secondary-bg:var(--evir-navy-950);
+--action-secondary-bg-hover:var(--evir-navy-800);
+--action-secondary-fg:var(--evir-white);
+--action-ghost-fg:var(--evir-navy-950);
+--action-ghost-bg-hover:var(--evir-gray-100);
+--action-disabled-bg:var(--evir-gray-200);
+--action-disabled-fg:var(--evir-gray-400);
+
+/* ---- Semantic: status ---- */
+--status-success-fg:var(--evir-mint-500);--status-success-bg:var(--evir-mint-100);
+--status-info-fg:var(--evir-sky-500);--status-info-bg:var(--evir-sky-100);
+--status-warning-fg:var(--evir-amber-500);--status-warning-bg:var(--evir-amber-100);
+--status-danger-fg:var(--evir-coral-500);--status-danger-bg:var(--evir-coral-100);
+--status-charging-fg:var(--evir-lime-600);--status-charging-bg:var(--evir-lime-100);
+}

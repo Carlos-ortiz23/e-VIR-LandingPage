@@ -1,0 +1,27 @@
+---
+import '../styles/fonts.css';
+import '../styles/colors.css';
+import '../styles/typography.css';
+import '../styles/spacing.css';
+import '../styles/radius.css';
+import '../styles/elevation.css';
+import '../styles/motion.css';
+import '../styles/base.css';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'e-VIR — Vuela como un canario' } = Astro.props;
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,42 @@
+/* e-VIR landing page — shared primitives (container, buttons) */
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--gutter-inline);
+  padding-right: var(--gutter-inline);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-label);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  border-radius: var(--radius-control);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background-color .14s var(--ease-standard), border-color .14s var(--ease-standard), box-shadow .14s var(--ease-standard), transform .08s var(--ease-standard);
+}
+.btn:active { transform: scale(.975); }
+
+.btn--sm { padding: 8px 16px; font-size: var(--fs-body-sm); min-height: 36px; }
+.btn--md { padding: 12px 24px; font-size: var(--fs-body); min-height: 46px; }
+.btn--lg { padding: 16px 32px; font-size: var(--fs-body-lg); min-height: 56px; }
+
+.btn--primary {
+  background: var(--action-primary-bg);
+  color: var(--action-primary-fg);
+  border-color: var(--action-primary-bg);
+  box-shadow: var(--shadow-sm);
+}
+.btn--primary:hover {
+  background: var(--action-primary-bg-hover);
+  border-color: var(--action-primary-bg-hover);
+}
