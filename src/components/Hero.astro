@@ -2,38 +2,41 @@
 import Navbar from './Navbar.astro';
 ---
 <section class="hero">
-  <div class="hero__blob-top" aria-hidden="true"></div>
-  <div class="hero__blob-bottom"></div>
-  <div class="hero__diagonal" aria-hidden="true"></div>
+  <div class="hero__canvas">
+    <div class="hero__blob-top" aria-hidden="true"></div>
+    <div class="hero__blob-bottom"></div>
+    <div class="hero__diagonal" aria-hidden="true"></div>
+    <img class="hero__badge-logo" src="/assets/evir-logo-cropped.png" alt="e-VIR" />
 
-  <Navbar />
+    <Navbar />
 
-  <div class="hero__content">
-    <span class="hero__eyebrow">Vuela como un canario</span>
-    <h1 class="hero__headline">Silencioso.<br />Suave. Libre.</h1>
-    <p class="hero__desc">Vehículos eléctricos nuevos y automáticos, con un modelo en el que el conductor termina siendo dueño.</p>
-    <a class="btn btn--primary btn--md hero__cta" href="#socio">Quiero mi e-VIR</a>
-    <div class="hero__stats">
-      <div class="hero__stat">
-        <span class="hero__stat-value">25</span>
-        <span class="hero__stat-label">Meta flota 2026</span>
-      </div>
-      <div class="hero__stat">
-        <span class="hero__stat-value">200</span>
-        <span class="hero__stat-label">Meta flota 2027</span>
-      </div>
-      <div class="hero__stat">
-        <span class="hero__stat-value">4</span>
-        <span class="hero__stat-label">Países</span>
-      </div>
-      <div class="hero__stat">
-        <span class="hero__stat-value">$0</span>
-        <span class="hero__stat-label">Cuota inicial</span>
+    <div class="hero__content">
+      <span class="hero__eyebrow">Vuela como un canario</span>
+      <h1 class="hero__headline">Silencioso.<br />Suave. Libre.</h1>
+      <p class="hero__desc">Vehículos eléctricos nuevos y automáticos, con un modelo en el que el conductor termina siendo dueño.</p>
+      <a class="btn btn--primary btn--md hero__cta" href="#socio">Quiero mi e-VIR</a>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-value">25</span>
+          <span class="hero__stat-label">Meta flota 2026</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-value">200</span>
+          <span class="hero__stat-label">Meta flota 2027</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-value">4</span>
+          <span class="hero__stat-label">Países</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-value">$0</span>
+          <span class="hero__stat-label">Cuota inicial</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <img class="hero__car" src="/assets/carro-verde.png" alt="e-VIR JMEV 2 — vehículo eléctrico" />
+    <img class="hero__car" src="/assets/carro-e10x.png" alt="e-VIR JMEV 2 — vehículo eléctrico" />
+  </div>
 </section>
 
 <style>
@@ -47,15 +50,55 @@ import Navbar from './Navbar.astro';
     background: var(--surface-ink);
   }
 
+  /* Everything inside is laid out at a fixed 1920x780 design size, then
+     scaled as one unit to fit the real viewport — so the car, the
+     diagonal panel and the text keep the exact same relative position and
+     proportions to each other on every screen (like a single scaled
+     image), instead of each piece reflowing independently.
+     The scale factor is computed in JS (see the script below), not with
+     vw/dvh: dvh and vh disagreed with each other and with the browser's
+     real, live innerWidth/innerHeight across zoom levels in testing,
+     which is exactly the sliver of error a "never scroll" requirement
+     can't absorb. window.innerWidth/innerHeight are the actual numbers
+     the browser is laying out against, no unit ambiguity. It picks the
+     smaller of a width-match (flush right edge, the normal case) and a
+     height-match (a small gap after the panel instead of a scrollbar, on
+     a screen too short for the design at full width) and writes it to
+     --hero-scale. The calc() fallback only covers the instant before
+     that script runs. */
+  .hero__canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 780px;
+    transform-origin: top left;
+    transform: scale(var(--hero-scale, calc(100vw / 1920px)));
+  }
+
   .hero__blob-top {
     position: absolute;
     left: 0;
     top: 0;
-    width: clamp(130px, 12.5vw, 190px);
-    height: clamp(96px, 9vw, 138px);
-    background: var(--surface-lime);
+    width: 190px;
+    height: 138px;
+    background: transparent;
     border-radius: 0 0 100% 0;
     z-index: 2;
+  }
+
+  /* Independent of the navbar on purpose: the navbar centers its links
+     across the full bar and no longer reserves a column for the logo, so
+     this is positioned solely against the gray badge shape's own curve
+     (a quarter-ellipse anchored at the top-left corner) — not against
+     nav padding, which would drift as the links block resizes. */
+  .hero__badge-logo {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    height: 58px;
+    width: auto;
+    z-index: 6;
   }
 
   .hero__blob-bottom {
@@ -63,14 +106,30 @@ import Navbar from './Navbar.astro';
   }
 
   .hero__diagonal {
-    position: absolute;
-    right: -25vw;
-    bottom: -35vw;
-    width: 85vw;
-    height: 85vw;
-    border-radius: 50%;
-    background: var(--surface-lime);
-    z-index: 3;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: var(--surface-lime);
+
+  clip-path: polygon(
+    100% 10.6%,
+    55.5% 65.5%,
+
+    54.8% 67.5%,
+    54.0% 70%,
+    53.0% 73%,
+    52.2% 76%,
+    51.7% 79%,
+    51.5% 82%,
+    51.5% 85%,
+    51.8% 88%,
+    52.2% 91%,
+    52.8% 94%,
+    53.5% 97%,
+    54.2% 100%,
+
+    100% 100%
+  );
     pointer-events: none;
   }
 
@@ -79,20 +138,20 @@ import Navbar from './Navbar.astro';
     left: 0;
     top: 0;
     height: 100%;
-    width: min(560px, 54%);
+    width: 560px;
     z-index: 5;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: clamp(10px, 1.2vw, 18px);
-    padding: clamp(90px, 10vw, 150px) clamp(16px, 2vw, 36px) clamp(48px, 6vw, 88px) clamp(28px, 3.2vw, 56px);
+    gap: 18px;
+    padding: 150px 36px 88px 56px;
   }
 
   .hero__eyebrow {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: var(--fw-bold);
-    font-size: clamp(18px, 2.3vw, 32px);
+    font-size: 26px;
     line-height: 1;
     color: var(--evir-lime-400);
   }
@@ -101,7 +160,7 @@ import Navbar from './Navbar.astro';
     margin: 0;
     font-family: var(--font-display);
     font-weight: var(--fw-extrabold);
-    font-size: clamp(34px, 4.6vw, 64px);
+    font-size: 54px;
     line-height: var(--lh-display);
     letter-spacing: var(--ls-display);
     color: var(--text-inverse);
@@ -110,18 +169,18 @@ import Navbar from './Navbar.astro';
   .hero__desc {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: clamp(13px, 1.1vw, 17px);
+    font-size: 15px;
     line-height: var(--lh-body);
     color: var(--text-inverse-muted);
     max-width: 30em;
   }
 
-  .hero__cta { align-self: flex-start; margin-top: clamp(4px, .6vw, 10px); }
+  .hero__cta { align-self: flex-start; margin-top: 10px; }
 
   .hero__stats {
     display: flex;
-    gap: clamp(14px, 1.6vw, 26px);
-    margin-top: clamp(10px, 1.4vw, 24px);
+    gap: 26px;
+    margin-top: 24px;
     flex-wrap: nowrap;
   }
 
@@ -129,7 +188,7 @@ import Navbar from './Navbar.astro';
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding-right: clamp(14px, 1.6vw, 26px);
+    padding-right: 26px;
     border-right: 1px solid var(--border-inverse);
     flex: 0 0 auto;
   }
@@ -137,7 +196,7 @@ import Navbar from './Navbar.astro';
 
   .hero__stat-value {
     font-family: var(--font-display);
-    font-size: clamp(18px, 1.9vw, 28px);
+    font-size: 24px;
     font-weight: var(--fw-extrabold);
     color: var(--text-inverse);
     line-height: 1;
@@ -146,7 +205,7 @@ import Navbar from './Navbar.astro';
 
   .hero__stat-label {
     font-family: var(--font-sans);
-    font-size: clamp(10px, .85vw, 13px);
+    font-size: 12px;
     font-weight: var(--fw-semibold);
     color: var(--text-inverse-muted);
     white-space: nowrap;
@@ -154,24 +213,11 @@ import Navbar from './Navbar.astro';
 
   .hero__car {
     position: absolute;
-    right: -2%;
-    bottom: 0;
-    width: clamp(320px, 52%, 780px);
+    right: 1.5%;
+    bottom: 2.5%;
+    width: 880px;
     z-index: 4;
     pointer-events: none;
-  }
-
-  /* Laptop panels (roughly 1280-2200px) hit the same near-max font sizes
-     as a large external desktop monitor, but on a physically smaller
-     screen that reads as oversized/bulky. Trim it back a bit in just this
-     band; wider desktop monitors and the tablet/mobile ranges below are
-     untouched. */
-  @media (min-width: 1280px) and (max-width: 2200px) {
-    .hero__eyebrow { font-size: 26px; }
-    .hero__headline { font-size: 54px; }
-    .hero__desc { font-size: 15px; }
-    .hero__stat-value { font-size: 24px; }
-    .hero__stat-label { font-size: 12px; }
   }
 
   @media (max-width: 680px) {
@@ -181,18 +227,22 @@ import Navbar from './Navbar.astro';
       padding-bottom: var(--space-9);
     }
 
-    .hero__blob-bottom {
-      display: block;
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 11%;
-      height: 13%;
-      min-width: 60px;
-      min-height: 60px;
-      background: var(--surface-lime);
-      border-radius: 0 100% 0 0;
-      z-index: 3;
+    .hero__canvas {
+      position: relative;
+      top: auto;
+      left: auto;
+      width: auto;
+      height: auto;
+      transform: none;
+    }
+
+    .hero__blob-top {
+      width: 130px;
+      height: 96px;
+    }
+
+    .hero__badge-logo {
+      display: none;
     }
 
     .hero__diagonal {
@@ -206,11 +256,18 @@ import Navbar from './Navbar.astro';
       padding: 96px var(--gutter-inline) 0;
     }
 
+    .hero__cta {
+      align-self: stretch;
+    }
+
     .hero__stats {
       flex-wrap: wrap;
+      justify-content: center;
       gap: 16px 24px;
     }
     .hero__stat {
+      align-items: center;
+      text-align: center;
       min-width: 42%;
       border-right: none;
       padding-right: 0;
@@ -229,3 +286,20 @@ import Navbar from './Navbar.astro';
     }
   }
 </style>
+
+<script>
+  const DESIGN_WIDTH = 1920;
+  const DESIGN_HEIGHT = 780;
+  const HEIGHT_BUFFER = 8;
+
+  function updateHeroScale() {
+    const scale = Math.min(
+      window.innerWidth / DESIGN_WIDTH,
+      (window.innerHeight - HEIGHT_BUFFER) / DESIGN_HEIGHT
+    );
+    document.documentElement.style.setProperty('--hero-scale', String(scale));
+  }
+
+  updateHeroScale();
+  window.addEventListener('resize', updateHeroScale);
+</script>

@@ -1,7 +1,7 @@
 ---
 ---
 <nav class="hero__nav">
-  <img class="hero__logo" src="/assets/evir-logo-badge.png" alt="e-VIR" />
+  <img class="hero__logo" src="/assets/evir-logo-cropped.png" alt="e-VIR" />
   <div class="hero__nav-links" id="heroNavLinks">
     <a href="#carro-milagro">Carro Milagro</a>
     <a href="#linea-verde">Línea Verde</a>
@@ -29,38 +29,39 @@
     left: 0;
     right: 0;
     z-index: 7;
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: flex;
     align-items: center;
-    gap: clamp(16px, 2.2vw, 40px);
-    padding: clamp(18px, 2.2vw, 30px) var(--gutter-inline);
+    justify-content: center;
+    gap: 40px;
+    padding: 30px 64px;
   }
 
+  /* Hidden on desktop: the brand mark lives in the gray badge shape
+     instead (see Hero.astro's .hero__badge-logo), independent of the
+     navbar so it stays put against the badge regardless of how wide the
+     centered links block is. Only reappears in the compact mobile bar,
+     where there's no badge shape to anchor it to. */
   .hero__logo {
-    height: clamp(30px, 2.6vw, 40px);
-    width: auto;
-    border-radius: var(--radius-sm);
-    display: block;
-    flex: 0 0 auto;
+    display: none;
   }
 
   .hero__nav-links {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(18px, 2vw, 34px);
+    gap: 34px;
   }
 
   .hero__nav-links a.hero__nav-cta {
     color: var(--action-primary-fg);
-    margin-left: clamp(4px, .6vw, 10px);
+    margin-left: 10px;
   }
   .hero__nav-links a.hero__nav-cta:hover { color: var(--action-primary-fg); }
 
   .hero__nav-links a {
     color: var(--text-inverse);
     font-family: var(--font-sans);
-    font-size: clamp(12px, 1.05vw, 15px);
+    font-size: 15px;
     font-weight: var(--fw-semibold);
     text-decoration: none;
     white-space: nowrap;
@@ -101,17 +102,32 @@
   @media (max-width: 680px) {
     :global(body.nav-open) { overflow: hidden; }
 
+    .hero__nav {
+      justify-content: space-between;
+    }
+
+    .hero__logo {
+      display: block;
+      height: 34px;
+      width: auto;
+      border-radius: var(--radius-sm);
+    }
+
     .hero__nav-toggle { display: flex; }
 
+    /* A left-aligned, divided list (Astro docs sidebar territory) instead
+       of a centered floating stack — reads as one organized menu block
+       instead of loose lines scattered down the middle of the screen. */
     .hero__nav-links {
       position: fixed;
       inset: 0;
       z-index: 10;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 26px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0;
+      padding: 112px var(--gutter-inline) 32px;
       background: var(--surface-ink);
       opacity: 0;
       visibility: hidden;
@@ -124,10 +140,26 @@
       transform: translateY(0);
     }
     .hero__nav-links a {
-      font-size: 19px;
+      display: block;
+      width: 100%;
+      padding: 17px 2px;
+      border-bottom: 1px solid var(--border-inverse);
+      font-size: 18px;
+      text-align: left;
       text-shadow: none;
     }
-    .hero__nav-links a.hero__nav-cta { margin: 10px 0 0; }
+    .hero__nav-links a.hero__nav-cta {
+      display: flex;
+      width: 100%;
+      align-self: stretch;
+      justify-content: center;
+      text-align: center;
+      margin: 28px 0 0;
+      padding: 15px 24px;
+      font-size: 17px;
+      min-height: 52px;
+      border-bottom: none;
+    }
   }
 </style>
 
