@@ -1,0 +1,170 @@
+---
+---
+<nav class="hero__nav">
+  <img class="hero__logo" src="/assets/evir-logo-badge.png" alt="e-VIR" />
+  <div class="hero__nav-links" id="heroNavLinks">
+    <a href="#carro-milagro">Carro Milagro</a>
+    <a href="#linea-verde">Línea Verde</a>
+    <a href="#modelo">Modelo</a>
+    <a href="#quienes-somos">Quiénes somos</a>
+    <a href="#expansion">Expansión</a>
+    <a class="btn btn--primary btn--sm hero__nav-cta" href="#socio">Ser socio</a>
+  </div>
+  <button
+    type="button"
+    class="hero__nav-toggle"
+    id="heroNavToggle"
+    aria-expanded="false"
+    aria-controls="heroNavLinks"
+    aria-label="Abrir menú"
+  >
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<style>
+  .hero__nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 7;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: clamp(16px, 2.2vw, 40px);
+    padding: clamp(18px, 2.2vw, 30px) var(--gutter-inline);
+  }
+
+  .hero__logo {
+    height: clamp(30px, 2.6vw, 40px);
+    width: auto;
+    border-radius: var(--radius-sm);
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  .hero__nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 2vw, 34px);
+  }
+
+  .hero__nav-links a.hero__nav-cta {
+    color: var(--action-primary-fg);
+    margin-left: clamp(4px, .6vw, 10px);
+  }
+  .hero__nav-links a.hero__nav-cta:hover { color: var(--action-primary-fg); }
+
+  .hero__nav-links a {
+    color: var(--text-inverse);
+    font-family: var(--font-sans);
+    font-size: clamp(12px, 1.05vw, 15px);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+    text-shadow: 0 1px 6px rgba(11, 16, 36, .5);
+  }
+  .hero__nav-links a:hover { color: var(--evir-lime-300); }
+
+  .hero__nav-cta { flex: 0 0 auto; }
+
+  .hero__nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    z-index: 11;
+    flex: 0 0 auto;
+  }
+  .hero__nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text-inverse);
+    transition: transform .2s var(--ease-standard), opacity .2s var(--ease-standard);
+  }
+  .hero__nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hero__nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .hero__nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 680px) {
+    :global(body.nav-open) { overflow: hidden; }
+
+    .hero__nav-toggle { display: flex; }
+
+    .hero__nav-links {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      background: var(--surface-ink);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-12px);
+      transition: opacity .22s var(--ease-standard), transform .22s var(--ease-standard), visibility .22s;
+    }
+    .hero__nav-links.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .hero__nav-links a {
+      font-size: 19px;
+      text-shadow: none;
+    }
+    .hero__nav-links a.hero__nav-cta { margin: 10px 0 0; }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('heroNavToggle');
+  const links = document.getElementById('heroNavLinks');
+
+  if (toggle && links) {
+    const closeMenu = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Abrir menú');
+      links.classList.remove('is-open');
+      document.body.classList.remove('nav-open');
+    };
+
+    const openMenu = () => {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Cerrar menú');
+      links.classList.add('is-open');
+      document.body.classList.add('nav-open');
+    };
+
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    links.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  }
+</script>
