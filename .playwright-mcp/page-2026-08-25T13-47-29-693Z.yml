@@ -1,0 +1,24 @@
+- generic [ref=f24e2]:
+  - navigation [ref=f24e5]:
+    - img "e-VIR" [ref=f24e6]
+    - button "Abrir menú" [ref=f24e7] [cursor=pointer]
+  - generic [ref=f24e11]:
+    - generic [ref=f24e12]: Vuela como un canario
+    - heading "Silencioso. Suave. Libre." [level=1] [ref=f24e13]: Silencioso.Suave. Libre.
+    - paragraph [ref=f24e14]: Vehículos eléctricos nuevos y automáticos, con un modelo en el que el conductor termina siendo dueño.
+    - link "Quiero mi e-VIR" [ref=f24e15] [cursor=pointer]:
+      - /url: "#socio"
+    - generic [ref=f24e16]:
+      - generic [ref=f24e17]:
+        - generic [ref=f24e18]: "25"
+        - generic [ref=f24e19]: Meta flota 2026
+      - generic [ref=f24e20]:
+        - generic [ref=f24e21]: "200"
+        - generic [ref=f24e22]: Meta flota 2027
+      - generic [ref=f24e23]:
+        - generic [ref=f24e24]: "4"
+        - generic [ref=f24e25]: Países
+      - generic [ref=f24e26]:
+        - generic [ref=f24e27]: $0
+        - generic [ref=f24e28]: Cuota inicial
+  - img "e-VIR JMEV 2 — vehículo eléctrico"
