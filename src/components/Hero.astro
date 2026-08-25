@@ -4,6 +4,7 @@ import Navbar from './Navbar.astro';
 <section class="hero">
   <div class="hero__blob-top" aria-hidden="true"></div>
   <div class="hero__blob-bottom"></div>
+  <div class="hero__diagonal" aria-hidden="true"></div>
 
   <Navbar />
 
@@ -11,7 +12,7 @@ import Navbar from './Navbar.astro';
     <span class="hero__eyebrow">Vuela como un canario</span>
     <h1 class="hero__headline">Silencioso.<br />Suave. Libre.</h1>
     <p class="hero__desc">Vehículos eléctricos nuevos y automáticos, con un modelo en el que el conductor termina siendo dueño.</p>
-    <a class="btn btn--primary btn--lg hero__cta" href="#socio">Quiero mi e-VIR</a>
+    <a class="btn btn--primary btn--md hero__cta" href="#socio">Quiero mi e-VIR</a>
     <div class="hero__stats">
       <div class="hero__stat">
         <span class="hero__stat-value">25</span>
@@ -58,16 +59,16 @@ import Navbar from './Navbar.astro';
   }
 
   .hero__blob-bottom {
+    display: none;
+  }
+
+  .hero__diagonal {
     position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 11%;
-    height: 13%;
-    min-width: 60px;
-    min-height: 60px;
-    background: var(--surface-lime);
-    border-radius: 0 100% 0 0;
+    inset: 0;
     z-index: 3;
+    background: var(--surface-lime);
+    clip-path: polygon(94% 18%, 100% 18%, 100% 100%, 50% 100%);
+    pointer-events: none;
   }
 
   .hero__content {
@@ -175,6 +176,24 @@ import Navbar from './Navbar.astro';
       height: auto;
       min-height: 100vh;
       padding-bottom: var(--space-9);
+    }
+
+    .hero__blob-bottom {
+      display: block;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 11%;
+      height: 13%;
+      min-width: 60px;
+      min-height: 60px;
+      background: var(--surface-lime);
+      border-radius: 0 100% 0 0;
+      z-index: 3;
+    }
+
+    .hero__diagonal {
+      display: none;
     }
 
     .hero__content {
