@@ -1,6 +1,0 @@
-/* EVIR webfonts. Sora = display/UI headings (geometric, technological, confident).
-   Manrope = body/UI text (humanist, open apertures, highly legible at small sizes).
-   JetBrains Mono = numeric/data readouts (range, kWh, IDs).
-   Substitution note: no original brand font files were supplied — these are the
-   nearest Google Fonts match to the wordmark's geometric grotesque letterforms. */
-@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap");
