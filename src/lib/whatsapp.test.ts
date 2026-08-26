@@ -40,6 +40,33 @@ describe('buildWhatsAppUrl', () => {
     expect(url).not.toContain(' ');
     expect(url).not.toContain('\n');
     expect(url).toContain('%0A');
-    expect(decodeURIComponent(url.split('?text=')[1])).toContain('María');
+    const decoded = decodeURIComponent(url.split('?text=')[1]);
+    expect(decoded).toContain('María');
+    expect(decoded).toContain('Alianza institucional (Línea Verde)');
+  });
+
+  it('preserva & = # intactos en un campo libre', () => {
+    const fields: LeadFields = {
+      ...FIELDS,
+      nombre: 'Juan & María S.A.S.',
+      detalle: 'Presupuesto #1, meta=alta',
+    };
+    const url = buildWhatsAppUrl('573000000000', 'socio', fields)!;
+    const decoded = decodeURIComponent(url.split('?text=')[1]);
+    expect(decoded).toContain('Juan & María S.A.S.');
+    expect(decoded).toContain('Presupuesto #1, meta=alta');
+  });
+
+  it('funciona también para la intención conductor', () => {
+    const url = buildWhatsAppUrl('573000000000', 'conductor', FIELDS)!;
+    expect(url).toMatch(/^https:\/\/wa\.me\/573000000000\?text=/);
+    const decoded = decodeURIComponent(url.split('?text=')[1]);
+    expect(decoded).toContain('conducir');
+  });
+
+  it('produce una URL válida incluso con los cuatro campos vacíos', () => {
+    const empty: LeadFields = { nombre: '', correo: '', whatsapp: '', detalle: '' };
+    const url = buildWhatsAppUrl('573000000000', 'socio', empty);
+    expect(url).toMatch(/^https:\/\/wa\.me\/573000000000\?text=/);
   });
 });
