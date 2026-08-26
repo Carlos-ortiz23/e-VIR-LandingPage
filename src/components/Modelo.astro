@@ -1,0 +1,86 @@
+---
+import Icon from './Icon.astro';
+
+/* El tercer punto se llamaba "Carro Milagro" en el kit de referencia. El
+   nombre está retirado de todo el sitio por decisión del cliente, así que
+   el mecanismo se describe sin bautizarlo. */
+const ITEMS = [
+  {
+    icon: 'percent',
+    title: 'Bajas comisiones',
+    body: 'Plataforma de comisiones bajas para el conductor, en alianza con PideyDale. El ingreso se queda donde se genera.',
+  },
+  {
+    icon: 'message-circle',
+    title: 'IA sobre WhatsApp Business',
+    body: 'Solicitudes, asignación y soporte operan sobre WhatsApp Business con inteligencia artificial: sin apps que descargar ni fricción para el usuario.',
+  },
+  {
+    icon: 'wallet',
+    title: 'Propiedad progresiva',
+    body: 'Cada cuota que pagas construye propiedad, no gasto. Al finalizar el plan, el vehículo queda a tu nombre.',
+  },
+  {
+    icon: 'leaf',
+    title: 'Cero emisiones',
+    body: 'Operación 100% eléctrica y silenciosa, alineada con la agenda de movilidad sostenible de la ciudad.',
+  },
+];
+---
+<section class="section" id="modelo" aria-labelledby="modelo-title">
+  <div class="section__inner">
+    <div class="section-head">
+      <span class="evir-eyebrow">Modelo de negocio</span>
+      <h2 class="section-head__title" id="modelo-title">
+        Un modelo disruptivo, simple para quien lo usa
+      </h2>
+      <p class="section-head__lead">
+        Tecnología donde suma y cero complejidad para el conductor y el pasajero.
+      </p>
+    </div>
+
+    <ul class="modelo__grid">
+      {ITEMS.map((i) => (
+        <li class="card card--interactive modelo__item">
+          <span class="icon-plate"><Icon name={i.icon} size={22} /></span>
+          <h3 class="modelo__title">{i.title}</h3>
+          <p class="modelo__body">{i.body}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* Cuatro tarjetas exactas: auto-fit con minmax(250px,1fr) del brief deja
+     una tarjeta huérfana en una fila propia entre ~880px y ~1220px de
+     viewport, donde caben 3 columnas pero sobra una cuarta tarjeta. Se fija
+     el número de columnas en los mismos puntos de quiebre que ya usan
+     Hero/Flota/LineaVerde/Navbar (680 y 1240) para que 1, 2 o 4 columnas
+     dividan siempre las cuatro tarjetas sin resto. */
+  .modelo__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 681px) {
+    .modelo__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1241px) {
+    .modelo__grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .modelo__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .modelo__title { font-size: var(--fs-h4); }
+  .modelo__body {
+    margin: 0;
+    font-size: var(--fs-body-sm);
+    color: var(--text-muted);
+  }
+</style>
