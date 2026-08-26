@@ -40,3 +40,153 @@
   background: var(--action-primary-bg-hover);
   border-color: var(--action-primary-bg-hover);
 }
+
+/* ---- Section shells ----
+   El design system autoriza dos rellenos de fondo por página además del
+   papel; la banda ink es lo que le da ritmo, así que se usa como
+   puntuación y nunca dos veces seguidas. */
+.section { background: var(--surface-page); }
+.section--sunken { background: var(--surface-sunken); }
+.section--ink { background: var(--surface-ink); }
+
+.section__inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--section-y) var(--gutter-inline);
+}
+
+/* ---- Section head ---- */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 680px;
+  margin-bottom: var(--space-9);
+}
+.section-head__title {
+  margin: 0;
+  font-size: var(--fs-h1);
+  color: var(--text-strong);
+}
+.section-head__lead {
+  margin: 0;
+  font-size: var(--fs-body-lg);
+  color: var(--text-muted);
+}
+.section--ink .section-head__title { color: var(--text-inverse); }
+.section--ink .section-head__lead { color: var(--text-inverse-muted); }
+.section--ink .evir-eyebrow { color: var(--evir-lime-400); }
+
+/* ---- Card ----
+   Los cinco tonos sancionados. Relleno con hairline Y sombra: nunca una
+   sola de las dos. Sin bordes de color a la izquierda, sin gradientes,
+   sin glassmorfismo. */
+.card {
+  padding: var(--card-pad);
+  border: var(--border-hairline) solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  color: var(--text-body);
+  box-shadow: var(--shadow-sm);
+}
+.card--flat {
+  background: var(--surface-sunken);
+  box-shadow: none;
+}
+.card--ink {
+  background: var(--surface-ink);
+  border-color: rgba(255, 255, 255, .06);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-lg);
+}
+.card--lime {
+  background: var(--surface-lime);
+  border-color: var(--evir-lime-500);
+  color: var(--text-on-lime);
+}
+.card--outline {
+  background: transparent;
+  border-width: var(--border-emphasis);
+  border-color: var(--border-default);
+  box-shadow: none;
+}
+.card--interactive {
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+.card--interactive:hover {
+  transform: translateY(var(--lift-y));
+  box-shadow: var(--shadow-lg);
+}
+.card h3 { margin: 0; }
+/* base.css sets an explicit color on h1-h5, which beats inheritance from
+   .card regardless of specificity — without this, --text-strong (navy-950)
+   sits on top of --surface-ink (also navy-950) and the heading vanishes. */
+.card--ink h3 { color: var(--text-inverse); }
+
+/* ---- Badge ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge--lime {
+  background: var(--surface-lime);
+  color: var(--text-on-lime);
+}
+
+/* ---- Icon plate ----
+   La placa lima-soft que acompaña a los iconos dentro de tarjetas. */
+.icon-plate {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  background: var(--surface-lime-soft);
+  color: var(--evir-lime-700);
+}
+.icon-plate--sm { width: 40px; height: 40px; border-radius: var(--radius-sm); }
+.section--ink .icon-plate {
+  background: rgba(172, 232, 48, .12);
+  color: var(--evir-lime-400);
+}
+
+/* ---- Feature row ----
+   Icono + texto en una línea. Se usa en listas de respaldo y ventajas. */
+.feature-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-body);
+}
+.feature-row > svg { flex: 0 0 auto; color: var(--evir-lime-600); }
+.section--ink .feature-row { color: var(--text-inverse); }
+.section--ink .feature-row > svg { color: var(--evir-lime-400); }
+
+/* ---- Secondary button ----
+   El sistema define tres variantes; solo existía la primaria. */
+.btn--secondary {
+  background: var(--action-secondary-bg);
+  color: var(--action-secondary-fg);
+  border-color: var(--action-secondary-bg);
+  box-shadow: var(--shadow-sm);
+}
+.btn--secondary:hover {
+  background: var(--action-secondary-bg-hover);
+  border-color: var(--action-secondary-bg-hover);
+  color: var(--action-secondary-fg);
+}
