@@ -57,8 +57,12 @@ Cada task de sección termina con estos cuatro pasos:
 
 1. `pnpm build` sale con código 0.
 2. `grep` sobre `dist/index.html` confirma que el copy y la estructura exigidos están presentes.
-3. El detector de layout no reporta nada: `node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/<Seccion>.astro` devuelve `[]`.
-4. Captura en el navegador a 1440×900 y 390×844, y **regresión del hero por proporciones** (ver abajo).
+3. Ojo con `grep -c`: cuenta **líneas**, no ocurrencias, y Astro emite el HTML
+   minificado en una sola línea. Para contar apariciones usa
+   `grep -o '<patrón>' dist/index.html | wc -l`. Un `grep -c` que espere un
+   número mayor que 1 siempre devolverá 1 y parecerá un fallo.
+4. El detector de layout no reporta nada: `node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/<Seccion>.astro` devuelve `[]`.
+5. Captura en el navegador a 1440×900 y 390×844, y **regresión del hero por proporciones** (ver abajo).
 
 El servidor de desarrollo ya corre en `http://localhost:4321`.
 
@@ -777,8 +781,8 @@ const SPECS = [
 ```bash
 pnpm build
 grep -c 'id="flota"' dist/index.html                                # espera 1
-grep -c 'JAC E10X' dist/index.html                                  # espera >=2 (hero alt + flota)
-grep -oc 'carro-e10x.png' dist/index.html                           # espera 2
+grep -o 'JAC E10X' dist/index.html | wc -l                          # espera >=2 (hero alt + flota)
+grep -o 'carro-e10x.png' dist/index.html | wc -l                    # espera 2
 grep -Ec '320 km|18 kWh|\$[0-9]{3}\.[0-9]{3}' dist/index.html       # espera 0 — cero cifras inventadas
 ```
 
@@ -1459,7 +1463,7 @@ const COLUMNS = [
 
 ```bash
 pnpm build
-grep -c 'Electric Vehicle I/A Ride' dist/index.html   # espera 2
+grep -o 'Electric Vehicle I/A Ride' dist/index.html | wc -l   # espera 2
 grep -c 'Carro Milagro' dist/index.html               # espera 0
 grep -c 'evir-mark-lime.png' dist/index.html          # espera 1
 test -f dist/assets/evir-mark-lime.png && echo "asset copiado"
@@ -2125,8 +2129,8 @@ pnpm build
 grep -c 'id="socio"' dist/index.html                       # espera 1
 grep -c 'propiedad progresiva' dist/index.html             # espera >=1
 grep -c 'Carro Milagro' dist/index.html                    # espera 0
-grep -c '<label' dist/index.html                           # espera >=5 — cada campo con label
-grep -c 'aria-expanded' dist/index.html                    # espera >=5 — 4 del FAQ + toggle del nav
+grep -o '<label' dist/index.html | wc -l                   # espera >=5 — cada campo con label
+grep -o 'aria-expanded' dist/index.html | wc -l            # espera >=5 — 4 del FAQ + toggle del nav
 ```
 
 - [ ] **Step 4: Probar la interacción en el navegador**
@@ -2213,7 +2217,7 @@ Captura de página completa en 1920×1080, 1440×900, 1366×768, 1366×1024, 102
 ```bash
 pnpm build
 grep -c '<h1' dist/index.html      # espera exactamente 1
-grep -c 'aria-labelledby' dist/index.html  # espera >=6, una por sección
+grep -o 'aria-labelledby' dist/index.html | wc -l  # espera >=6, una por sección
 ```
 
 En el navegador: recorrer toda la página con Tab y confirmar que el foco siempre es visible y que el orden sigue el orden visual. Comprobar contraste del texto de cuerpo sobre las tres bandas.
