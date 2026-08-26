@@ -58,9 +58,38 @@ Cada task de sección termina con estos cuatro pasos:
 1. `pnpm build` sale con código 0.
 2. `grep` sobre `dist/index.html` confirma que el copy y la estructura exigidos están presentes.
 3. El detector de layout no reporta nada: `node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/<Seccion>.astro` devuelve `[]`.
-4. Captura en el navegador a 1440×900 y 390×844, y **regresión del hero**: a 1920×1080 el rect del coche debe seguir siendo exactamente `[1011, 466, 880, 587]`.
+4. Captura en el navegador a 1440×900 y 390×844, y **regresión del hero por proporciones** (ver abajo).
 
 El servidor de desarrollo ya corre en `http://localhost:4321`.
+
+### Regresión del hero: proporciones, no píxeles
+
+En cuanto existe contenido debajo del hero la página hace scroll, aparece una
+barra de ~15px y el `<html>` se estrecha. Todo valor en `%` del hero resuelve
+contra esa caja más estrecha, así que el coche mide 873px en vez de 880 —
+sin que nada esté roto. Y el ancho de esa barra varía por sistema: 0px en macOS
+con scrollbars superpuestas, 15 aquí, 17 en algunos Windows. Una baseline en
+píxeles absolutos fallaría en otra máquina sin haber ningún defecto.
+
+Lo que hay que conservar son las proporciones. Mide contra `.hero__canvas`:
+
+```js
+const canvas = document.querySelector('.hero__canvas').getBoundingClientRect();
+const car = document.querySelector('.hero__car').getBoundingClientRect();
+const content = document.querySelector('.hero__content').getBoundingClientRect();
+({
+  carWidthPct:     car.width / canvas.width * 100,              // 45.83
+  carRightPct:     (canvas.right - car.right) / canvas.width * 100,   // 1.5
+  carBottomPct:    (canvas.bottom - car.bottom) / canvas.height * 100, // 2.5
+  contentWidthPct: content.width / canvas.width * 100,          // 35
+  heroFillsViewport: canvas.height === innerHeight,             // true
+  horizontalOverflow: document.documentElement.scrollWidth >
+                      document.documentElement.clientWidth,      // false
+})
+```
+
+Tolerancia: 0,1 puntos porcentuales. Cualquier desviación mayor significa que
+CSS nuevo se filtró al hero.
 
 ---
 
@@ -2151,13 +2180,21 @@ not just a placeholder."
 
 En el navegador, para cada viewport, comprobar que estos valores no se movieron respecto a los que el hero tenía antes de esta rama:
 
-| Viewport | rect del coche | ápice cuña | headline |
+El ápice de la cuña y el tamaño del titular usan `vh`/`vw`, que ignoran la
+barra de scroll, así que esos sí son estables en píxeles. El rect del coche
+depende de `%`, así que se comprueba por proporción.
+
+| Viewport | ápice cuña | headline | proporciones del coche |
 |---|---|---|---|
-| 1920×1080 | `[1011, 466, 880, 587]` | 72.1% | 77.76px |
-| 1920×780 | `[1011, 174, 880, 587]` | 65.5% | 65.52px |
-| 1440×900 | `[758, 438, 660, 440]` | 67.2% | 58.32px |
-| 1366×768 | `[719, 331, 626, 417]` | 72.0% | 55.32px |
-| 2560×1080 | `[1348, 271, 1173, 782]` | 66.4% | 90.72px |
+| 1920×1080 | 72.1% | 77.76px | 45.83 / 1.5 / 2.5 |
+| 1920×780 | 65.5% | 65.52px | 45.83 / 1.5 / 2.5 |
+| 1440×900 | 67.2% | 58.32px | 45.83 / 1.5 / 2.5 |
+| 1366×768 | 72.0% | 55.32px | 45.83 / 1.5 / 2.5 |
+| 2560×1080 | 66.4% | 90.72px | 45.83 / 1.5 / 2.5 |
+
+(ancho / margen derecho / margen inferior, en % del canvas. En 1366×1024 y por
+debajo de 1.5:1 de aspecto el ancho sube por el término `vh`; ahí solo se
+comprueban los márgenes 1.5 / 2.5 y la ausencia de overflow.)
 
 Cualquier desviación significa que algo del vocabulario nuevo se filtró al hero. Búscalo antes de seguir.
 
