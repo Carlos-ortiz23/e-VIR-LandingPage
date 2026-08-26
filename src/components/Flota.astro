@@ -65,10 +65,16 @@ const SPECS = [
     border-radius: var(--radius-panel);
   }
 
-  /* Tope del 60% del ancho del panel: bastante menor que en el hero, donde
-     el coche llega al 45% del viewport completo. */
+  /* Una sola expresión monótona en todo el rango, en vez de un porcentaje
+     de escritorio y otro de móvil separados por el breakpoint de 680px:
+     esa pareja producía un salto no monótono (el coche encogía justo por
+     encima de 680px y no recuperaba tamaño hasta ~880px). 88% le da
+     presencia real en un teléfono angosto; el tope de 560px es el mismo
+     que antes y sigue siendo el que manda en el panel a su ancho máximo
+     (ronda el 60% del ancho de contenido del panel ahí), bastante menor
+     que en el hero, donde el coche llega al 45% del viewport completo. */
   .flota__car {
-    width: min(60%, 560px);
+    width: min(88%, 560px);
     height: auto;
   }
 
@@ -119,7 +125,6 @@ const SPECS = [
   }
 
   @media (max-width: 680px) {
-    .flota__car { width: min(88%, 420px); }
     .flota__specs { grid-template-columns: 1fr 1fr; text-align: left; }
   }
 </style>
