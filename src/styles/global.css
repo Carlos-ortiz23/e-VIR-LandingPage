@@ -123,6 +123,10 @@
    .card regardless of specificity — without this, --text-strong (navy-950)
    sits on top of --surface-ink (also navy-950) and the heading vanishes. */
 .card--ink h3 { color: var(--text-inverse); }
+/* card--outline has no background of its own — it shows whatever surface is
+   behind it, so its heading follows the section's tone instead of a fixed
+   card tone. Same invisible-on-dark failure mode as card--ink above. */
+.section--ink .card--outline h3 { color: var(--text-inverse); }
 
 /* ---- Badge ---- */
 .badge {
@@ -151,15 +155,34 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
+  width: var(--space-9);
+  height: var(--space-9);
   border-radius: var(--radius-md);
   background: var(--surface-lime-soft);
   color: var(--evir-lime-700);
 }
-.icon-plate--sm { width: 40px; height: 40px; border-radius: var(--radius-sm); }
-.section--ink .icon-plate {
-  background: rgba(172, 232, 48, .12);
+.icon-plate--sm { width: var(--space-8); height: var(--space-8); border-radius: var(--radius-sm); }
+
+/* Dark surfaces: the ink band itself, or an ink-toned card, wherever it sits.
+   color-mix keeps this token-derived instead of a hand-composed rgba(). */
+.section--ink .icon-plate,
+.card--ink .icon-plate {
+  background: color-mix(in oklab, var(--evir-lime-400) 12%, transparent);
+  color: var(--evir-lime-400);
+}
+/* A light-toned, opaque card keeps the default plate even inside an ink
+   band — treatment comes from the card the element actually sits on, not
+   the section around it. card--outline is excluded: it has no background
+   of its own, so it shows the section behind it and should follow suit. */
+.card:not(.card--ink):not(.card--lime):not(.card--outline) .icon-plate {
+  background: var(--surface-lime-soft);
+  color: var(--evir-lime-700);
+}
+/* A lime card is itself a bright surface: the default light-lime plate (or
+   the dark band's translucent lime tint) both disappear against it, so it
+   gets the same strong ink/lime pairing used on dark surfaces instead. */
+.card--lime .icon-plate {
+  background: var(--surface-ink);
   color: var(--evir-lime-400);
 }
 
@@ -174,8 +197,21 @@
   color: var(--text-body);
 }
 .feature-row > svg { flex: 0 0 auto; color: var(--evir-lime-600); }
-.section--ink .feature-row { color: var(--text-inverse); }
-.section--ink .feature-row > svg { color: var(--evir-lime-400); }
+
+/* Dark surfaces: the ink band itself, or an ink-toned card, wherever it sits. */
+.section--ink .feature-row,
+.card--ink .feature-row { color: var(--text-inverse); }
+.section--ink .feature-row > svg,
+.card--ink .feature-row > svg { color: var(--evir-lime-400); }
+/* Any other opaque card keeps normal body text even inside an ink band — a
+   lime card's own dark-on-lime foreground already reads fine here too.
+   card--outline is excluded: it has no background of its own, so it shows
+   the section behind it and should follow suit, not get reset to normal. */
+.card:not(.card--ink):not(.card--outline) .feature-row { color: var(--text-body); }
+/* The default green icon doesn't read against a lime card's own background,
+   so it borrows the card's dark-on-lime foreground instead. */
+.card--lime .feature-row > svg { color: var(--text-on-lime); }
+.card:not(.card--ink):not(.card--lime):not(.card--outline) .feature-row > svg { color: var(--evir-lime-600); }
 
 /* ---- Secondary button ----
    El sistema define tres variantes; solo existía la primaria. */
