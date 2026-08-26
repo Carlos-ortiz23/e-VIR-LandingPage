@@ -1,0 +1,125 @@
+---
+/* Reusa la misma ruta que el hero a propósito: el navegador ya la tiene en
+   caché, así que la segunda aparición no cuesta una descarga. El
+   tratamiento es distinto —panel ink, centrado, ficha de producto— para que
+   no lea como el hero repetido.
+   Las especificaciones son SOLO cualitativas: no hay cifras verificadas de
+   autonomía, batería ni precio, y el proyecto no inventa cifras. */
+const SPECS = [
+  { value: 'Automático', label: 'Transmisión' },
+  { value: '100% eléctrico', label: 'Motor' },
+  { value: 'Nuevo', label: 'Estado' },
+  { value: 'Flota propia', label: 'Titularidad' },
+];
+---
+<section class="section section--sunken" id="flota" aria-labelledby="flota-title">
+  <div class="section__inner">
+    <div class="section-head">
+      <span class="evir-eyebrow">Flota</span>
+      <h2 class="section-head__title" id="flota-title">
+        Somos propietarios de nuestra propia flota
+      </h2>
+      <p class="section-head__lead">
+        No intermediamos vehículos ajenos: los vehículos son nuestros, nuevos,
+        eléctricos y automáticos. Eso nos permite garantizar calidad,
+        mantenimiento y condiciones justas para el conductor.
+      </p>
+    </div>
+
+    <div class="card card--ink flota__panel">
+      <img
+        class="flota__car"
+        src="/assets/carro-e10x.png"
+        alt="JAC E10X, el vehículo de la flota de e-VIR"
+        loading="lazy"
+        decoding="async"
+        width="1536"
+        height="1024"
+      />
+      <div class="flota__meta">
+        <h3 class="flota__name">JAC E10X</h3>
+        <dl class="flota__specs">
+          {SPECS.map((s) => (
+            <div class="flota__spec">
+              <dt class="flota__spec-label">{s.label}</dt>
+              <dd class="evir-data flota__spec-value">{s.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Deltas sobre .card/.card--ink (global.css) únicamente: el panel de
+     producto necesita su propio ritmo vertical, un radio de "panel" en vez
+     del de tarjeta, y más aire que --card-pad. Fondo, borde y color de
+     encabezado los hereda de .card--ink. */
+  .flota__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+    padding: clamp(var(--space-7), 4vw, var(--space-11));
+    border-radius: var(--radius-panel);
+  }
+
+  /* Tope del 60% del ancho del panel: bastante menor que en el hero, donde
+     el coche llega al 45% del viewport completo. */
+  .flota__car {
+    width: min(60%, 560px);
+    height: auto;
+  }
+
+  .flota__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    width: 100%;
+  }
+
+  /* Único delta sobre el h3 base (base.css): tamaño. Familia, peso y color
+     ya llegan del selector de heading global y de .card--ink h3. */
+  .flota__name {
+    font-size: var(--fs-h2);
+  }
+
+  .flota__specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-5);
+    width: 100%;
+    max-width: 720px;
+    margin: 0;
+    padding-top: var(--space-6);
+    border-top: var(--border-hairline) solid var(--border-inverse);
+    text-align: center;
+  }
+
+  .flota__spec { display: flex; flex-direction: column; gap: var(--space-1); }
+
+  .flota__spec-label {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-inverse-muted);
+  }
+
+  /* .evir-data (base.css) ya da la fuente mono y las cifras tabulares que
+     pide el sistema para datos; aquí solo lo que le falta: tamaño, peso y
+     color sobre el panel ink. */
+  .flota__spec-value {
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    color: var(--text-inverse);
+  }
+
+  @media (max-width: 680px) {
+    .flota__car { width: min(88%, 420px); }
+    .flota__specs { grid-template-columns: 1fr 1fr; text-align: left; }
+  }
+</style>
