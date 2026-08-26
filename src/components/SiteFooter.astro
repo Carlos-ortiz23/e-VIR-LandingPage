@@ -1,0 +1,121 @@
+---
+/* La columna Producto solo enlaza campañas vigentes: el sitio retiró un
+   nombre de campaña que circuló antes y no debe reaparecer aquí ni en
+   ningún otro lugar. Los enlaces apuntan a las secciones que existen de
+   verdad; los que no tienen sección todavía van a #socio, que es el
+   destino de contacto. */
+const COLUMNS = [
+  {
+    title: 'Producto',
+    links: [
+      { label: 'Línea Verde', href: '#linea-verde' },
+      { label: 'Flota', href: '#flota' },
+      { label: 'Modelo de negocio', href: '#modelo' },
+    ],
+  },
+  {
+    title: 'Compañía',
+    links: [
+      { label: 'Quiénes somos', href: '#quienes-somos' },
+      { label: 'Expansión', href: '#expansion' },
+    ],
+  },
+  {
+    title: 'Contacto',
+    links: [
+      { label: 'Ser socio', href: '#socio' },
+      { label: 'Ser conductor', href: '#socio' },
+    ],
+  },
+];
+---
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <img
+        class="footer__mark"
+        src="/assets/evir-mark-lime.png"
+        alt="e-VIR"
+        width="511"
+        height="456"
+        loading="lazy"
+        decoding="async"
+      />
+      <p class="footer__desc">
+        e-VIR — Electric Vehicle I/A Ride. Movilidad eléctrica sostenible,
+        inclusiva e inteligente para Latinoamérica.
+      </p>
+      <p class="footer__legal">
+        e-VIR Investments LLC · Delaware, EE. UU.<br />
+        Sede de operación: Barranquilla, Colombia
+      </p>
+    </div>
+
+    {COLUMNS.map((c) => (
+      <nav class="footer__col" aria-label={c.title}>
+        <span class="evir-eyebrow footer__col-title">{c.title}</span>
+        {c.links.map((l) => (
+          <a class="footer__link" href={l.href}>{l.label}</a>
+        ))}
+      </nav>
+    ))}
+  </div>
+
+  <div class="footer__bar">
+    <span>© 2026 e-VIR Investments LLC · Distracon S.A.S.</span>
+    <span>Electric Vehicle I/A Ride</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--surface-ink);
+    color: var(--text-inverse-muted);
+    border-top: var(--border-hairline) solid var(--border-inverse);
+  }
+
+  .footer__inner,
+  .footer__bar {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding-inline: var(--gutter-inline);
+  }
+
+  .footer__inner {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.4fr) repeat(3, minmax(130px, .8fr));
+    gap: var(--space-8);
+    padding-block: var(--space-10) var(--space-8);
+  }
+
+  .footer__brand { display: flex; flex-direction: column; gap: var(--space-4); }
+  .footer__mark { align-self: flex-start; width: auto; height: 44px; }
+  .footer__desc { margin: 0; max-width: 34ch; font-size: var(--fs-body-sm); }
+  .footer__legal { margin: 0; font-size: var(--fs-caption); }
+
+  .footer__col { display: flex; flex-direction: column; gap: var(--space-3); }
+  .footer__col-title { color: var(--evir-lime-400); }
+  .footer__link {
+    color: var(--text-inverse-muted);
+    font-size: var(--fs-body-sm);
+    text-decoration: none;
+  }
+  .footer__link:hover { color: var(--evir-lime-300); }
+
+  .footer__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-5) var(--space-8);
+    border-top: var(--border-hairline) solid var(--border-inverse);
+    font-size: var(--fs-caption);
+  }
+
+  @media (max-width: 860px) {
+    .footer__inner { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .footer__inner { grid-template-columns: 1fr; gap: var(--space-7); }
+  }
+</style>
