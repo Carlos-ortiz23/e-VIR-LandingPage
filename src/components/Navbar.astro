@@ -3,7 +3,6 @@
 <nav class="hero__nav">
   <img class="hero__logo" src="/assets/evir-logo-cropped.png" alt="e-VIR" />
   <div class="hero__nav-links" id="heroNavLinks">
-    <a href="#carro-milagro">Carro Milagro</a>
     <a href="#linea-verde">Línea Verde</a>
     <a href="#modelo">Modelo</a>
     <a href="#quienes-somos">Quiénes somos</a>
@@ -23,6 +22,9 @@
 </nav>
 
 <style>
+  /* Sizes track the hero's fluid composition (the vw middle terms land on
+     the design's 40/30/64 at 1920) but clamp to real reading sizes rather
+     than shrinking with the layout. */
   .hero__nav {
     position: absolute;
     top: 0;
@@ -32,8 +34,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
-    padding: 30px 64px;
+    gap: clamp(16px, 2.0833vw, 44px);
+    padding: clamp(16px, 1.5625vw, 34px) clamp(20px, 3.3333vw, 72px);
   }
 
   /* Hidden on desktop: the brand mark lives in the gray badge shape
@@ -49,19 +51,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 34px;
+    gap: clamp(14px, 1.7708vw, 38px);
   }
 
   .hero__nav-links a.hero__nav-cta {
     color: var(--action-primary-fg);
-    margin-left: 10px;
+    margin-left: clamp(4px, 0.52vw, 12px);
   }
   .hero__nav-links a.hero__nav-cta:hover { color: var(--action-primary-fg); }
 
   .hero__nav-links a {
     color: var(--text-inverse);
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: clamp(13px, 0.78125vw, 17px);
     font-weight: var(--fw-semibold);
     text-decoration: none;
     white-space: nowrap;

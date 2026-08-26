@@ -40,40 +40,67 @@ import Navbar from './Navbar.astro';
 </section>
 
 <style>
+  /* The hero is a fluid composition, not a scaled picture.
+     Two earlier passes are worth remembering. The first laid everything
+     out on a fixed 1920x780 canvas and scaled it as one unit, which held
+     the composition but dragged the type down with it (6.8px body copy at
+     768px wide). The second expressed geometry as percentages of the hero
+     box and clamped the type — right instinct, but it kept the reference
+     ratio as the hero's own height (min-height: 100vw / 2.4615). That is
+     the bug this pass removes: every normal desktop is between 1.6 and
+     1.78 wide-to-tall, so a 2.4615 box underfilled the viewport and left
+     a ~300px white band under the hero at 1920x1080. The vertical padding
+     was worse than useless there, because percentage padding resolves
+     against the *width* — a short, wide window got the biggest top pad.
+     So the vertical axis is now driven by vh (padding, gaps, and the
+     height floors) while the horizontal axis stays proportional to the
+     canvas (%, vw), and type clamps on min(vw, vh) so it grows with a
+     tall screen and never overruns a short one. The wedge is re-anchored
+     so it reproduces the reference exactly and still meets the car the
+     same way in a 1080-tall box, which is what let the car itself stay
+     untouched. */
   .hero {
+    /* One inline rhythm for the whole composition. The badge logo and the
+       content column both start here, so the left edge reads as a single
+       deliberate margin instead of two values that happen to be close.
+       3.125vw lands on 60px at 1920. */
+    --hero-inline: clamp(24px, 3.125vw, 60px);
+
     position: relative;
+    display: grid;
     width: 100%;
-    min-height: 560px;
     height: 100vh;
-    height: 100dvh;
+    min-height: 100vh;
     overflow: hidden;
     background: var(--surface-ink);
   }
 
-  /* Everything inside is laid out at a fixed 1920x780 design size, then
-     scaled as one unit to fit the real viewport — so the car, the
-     diagonal panel and the text keep the exact same relative position and
-     proportions to each other on every screen (like a single scaled
-     image), instead of each piece reflowing independently.
-     The scale factor is computed in JS (see the script below), not with
-     vw/dvh: dvh and vh disagreed with each other and with the browser's
-     real, live innerWidth/innerHeight across zoom levels in testing,
-     which is exactly the sliver of error a "never scroll" requirement
-     can't absorb. window.innerWidth/innerHeight are the actual numbers
-     the browser is laying out against, no unit ambiguity. It picks the
-     smaller of a width-match (flush right edge, the normal case) and a
-     height-match (a small gap after the panel instead of a scrollbar, on
-     a screen too short for the design at full width) and writes it to
-     --hero-scale. The calc() fallback only covers the instant before
-     that script runs. */
+  @supports (height: 100dvh) {
+    .hero {
+      height: 100dvh;
+      min-height: 100dvh;
+    }
+  }
+
+  /* Escape hatch for a window too short to hold the block at its floor
+     sizes: let the hero grow rather than clip the CTA or the stats. */
+  @media (min-width: 681px) and (max-height: 560px) {
+    .hero { height: auto; }
+  }
+
+  /* The single grid child, so it stretches to the hero's used height and
+     becomes the containing block for the wedge, the logo and the car —
+     all of which resolved against .hero before and resolve against a box
+     of identical dimensions now. */
   .hero__canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1920px;
-    height: 780px;
-    transform-origin: top left;
-    transform: scale(var(--hero-scale, calc(100vw / 1920px)));
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+  }
+
+  @supports (height: 100dvh) {
+    .hero__canvas { min-height: 100dvh; }
   }
 
   .hero__blob-top {
@@ -88,15 +115,16 @@ import Navbar from './Navbar.astro';
   }
 
   /* Independent of the navbar on purpose: the navbar centers its links
-     across the full bar and no longer reserves a column for the logo, so
-     this is positioned solely against the gray badge shape's own curve
-     (a quarter-ellipse anchored at the top-left corner) — not against
-     nav padding, which would drift as the links block resizes. */
+     across the full bar and reserves no column for the logo. It used to
+     sit at 0.4167% of each axis, i.e. 8px from the left and 3px from the
+     top — visually stuck to the corner. It now shares the composition's
+     inline rhythm with the content column, and its top offset is tuned so
+     the mark's optical centre lands on the nav row's centre. */
   .hero__badge-logo {
     position: absolute;
-    left: 8px;
-    top: 8px;
-    height: 58px;
+    left: var(--hero-inline);
+    top: clamp(16px, 1.8vh, 24px);
+    height: clamp(34px, 3.0208vw, 58px);
     width: auto;
     z-index: 6;
   }
@@ -106,52 +134,110 @@ import Navbar from './Navbar.astro';
   }
 
   .hero__diagonal {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  background: var(--surface-lime);
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: var(--surface-lime);
 
-  clip-path: polygon(
-    100% 10.6%,
-    55.5% 65.5%,
+    /* Two anchors drive the whole shape: where the diagonal meets the
+       right edge, and the apex where it turns into the S-curve. Every
+       point below the apex interpolates between the apex and the bottom
+       edge, so the shape stays proportionally itself at any height.
+       Both anchors are a vh term with a vw correction, solved so they
+       land on the original 10.6% / 65.5% to the pixel at the 1920x780
+       reference and on 11% / 72% at 16:9. That second pair is what keeps
+       the relationship the car had with the wedge: bottom-anchored in a
+       1080-tall hero the car sits lower, and a purely proportional apex
+       would have swallowed the whole vehicle in lime instead of letting
+       the diagonal cut across its roofline. The 42vw ceiling and the
+       clamps only bind on a screen taller than 1.6:1, where they hold the
+       diagonal near 40deg instead of letting it stand up into a vertical
+       split of the page.
 
-    54.8% 67.5%,
-    54.0% 70%,
-    53.0% 73%,
-    52.2% 76%,
-    51.7% 79%,
-    51.5% 82%,
-    51.5% 85%,
-    51.8% 88%,
-    52.2% 91%,
-    52.8% 94%,
-    53.5% 97%,
-    54.2% 100%,
+       --wedge-band is the second half of that: it caps how much *height*
+       the wedge is allowed to work in, measured from the bottom edge up.
+       Below 1.6:1 — an iPad Pro landscape is 1.33:1 — the canvas grows
+       taller while everything the width controls (the car at 45.83%, the
+       column at 35%) stays put, and a height-proportional apex turned the
+       wedge into 30% of the screen with the car adrift inside it. Capping
+       the band at 62.5vw keeps the wedge a bottom-right corner shape and
+       holds the diagonal at the same ~37deg it has on a 16:9 desktop.
+       62.5vw is exactly 1/1.6, so the cap is inert at 1.6:1 and above:
+       every desktop ratio keeps the geometry above, unchanged, and the
+       max() blend means there is no jump at the crossover. */
+    --wedge-band: min(100%, 62.5vw);
+    --wedge-entry: max(
+      clamp(6%, 12.1vh - 0.61vw, 13%),
+      calc(100% - 0.894 * var(--wedge-band))
+    );
+    --wedge-apex: max(
+      clamp(40%, min(89vh - 9.53vw, 42vw), 78%),
+      calc(100% - 0.345 * var(--wedge-band))
+    );
 
-    100% 100%
-  );
+    clip-path: polygon(
+      100%   var(--wedge-entry),
+      55.5%  var(--wedge-apex),
+
+      54.8%  calc(5.7971%  + 0.942029 * var(--wedge-apex)),
+      54.0%  calc(13.0435% + 0.869565 * var(--wedge-apex)),
+      53.0%  calc(21.7391% + 0.782609 * var(--wedge-apex)),
+      52.2%  calc(30.4348% + 0.695652 * var(--wedge-apex)),
+      51.7%  calc(39.1304% + 0.608696 * var(--wedge-apex)),
+      51.5%  calc(47.8261% + 0.521739 * var(--wedge-apex)),
+      51.5%  calc(56.5217% + 0.434783 * var(--wedge-apex)),
+      51.8%  calc(65.2174% + 0.347826 * var(--wedge-apex)),
+      52.2%  calc(73.9130% + 0.260870 * var(--wedge-apex)),
+      52.8%  calc(82.6087% + 0.173913 * var(--wedge-apex)),
+      53.5%  calc(91.3043% + 0.086957 * var(--wedge-apex)),
+      54.2%  100%,
+
+      100%   100%
+    );
     pointer-events: none;
   }
 
+  /* 35% of the canvas, up from 29.17%, and a much smaller trailing pad.
+     The old column stopped at 560px of 1920 while the car's box starts at
+     1011px, so a quarter of the screen was dead navy in the middle; this
+     hands ~120px of that back to the type. The measure still stops well
+     short of the wedge — at the stats' height the lime edge is ~360px
+     clear of the longest line. Vertical padding is vh so it tracks the
+     screen's height (the old 7.8%/4.6% tracked its width); the top value
+     always clears the nav row and the badge logo, and the block is
+     centred in what is left, which puts its optical centre a touch below
+     the hero's midline. */
   .hero__content {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 560px;
+    position: relative;
     z-index: 5;
+    width: max(360px, 35%);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 18px;
-    padding: 150px 36px 88px 56px;
+    gap: clamp(9px, 1.55vh, 20px);
+    padding:
+      clamp(88px, 13vh, 168px)
+      clamp(12px, 1.25vw, 28px)
+      clamp(40px, 8vh, 96px)
+      var(--hero-inline);
   }
 
+  @supports (height: 100dvh) {
+    .hero__content { min-height: 100dvh; }
+  }
+
+  /* Type sizes take min(vw, vh): the vw term keeps them proportional to
+     the column they live in, the vh term is what stops a 1920x780 window
+     from getting 1080-sized copy. At the 1920x780 reference they land
+     within a couple of px of the previous values, so that composition is
+     preserved; on a 1440x900 or 1920x1080 screen — where the old vw-only
+     sizes left the block undersized — they gain real presence. */
   .hero__eyebrow {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: var(--fw-bold);
-    font-size: 26px;
+    font-size: clamp(19px, min(1.95vw, 4vh), 40px);
     line-height: 1;
     color: var(--evir-lime-400);
   }
@@ -160,35 +246,51 @@ import Navbar from './Navbar.astro';
     margin: 0;
     font-family: var(--font-display);
     font-weight: var(--fw-extrabold);
-    font-size: 54px;
+    font-size: clamp(34px, min(4.05vw, 8.4vh), 92px);
     line-height: var(--lh-display);
     letter-spacing: var(--ls-display);
     color: var(--text-inverse);
   }
 
   .hero__desc {
-    margin: 0;
+    margin: clamp(2px, 0.75vh, 10px) 0 0;
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: clamp(15px, min(1.1vw, 2.35vh), 22px);
     line-height: var(--lh-body);
     color: var(--text-inverse-muted);
     max-width: 30em;
   }
 
-  .hero__cta { align-self: flex-start; margin-top: 10px; }
+  /* The button carries its own presence now instead of inheriting the
+     small btn--md box: its padding and height scale with the screen, so
+     it stays proportional to a 78px headline. */
+  .hero__cta {
+    align-self: flex-start;
+    margin-top: clamp(2px, 0.9vh, 12px);
+    padding: clamp(12px, 1.5vh, 18px) clamp(22px, 2vw, 38px);
+    min-height: clamp(46px, 5.4vh, 62px);
+    font-size: clamp(15px, min(1.04vw, 2.25vh), 21px);
+  }
 
+  /* Pulled closer to the CTA than before (the old 24px margin plus an
+     18px gap read as a separate floating row). Wrapping is still allowed:
+     on a mid-size screen the four stats stop fitting one line, and a
+     second row reads better than a clipped fourth stat. The column gap
+     and the per-stat padding are the two halves of the channel around
+     each divider rule, tightened so all four still make one row at 1920
+     at the larger label size. */
   .hero__stats {
     display: flex;
-    gap: 26px;
-    margin-top: 24px;
-    flex-wrap: nowrap;
+    gap: clamp(10px, 1.1vh, 16px) clamp(10px, 0.95vw, 18px);
+    margin-top: clamp(8px, 1.85vh, 24px);
+    flex-wrap: wrap;
   }
 
   .hero__stat {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding-right: 26px;
+    gap: clamp(2px, 0.35vh, 5px);
+    padding-right: clamp(12px, 1.1vw, 22px);
     border-right: 1px solid var(--border-inverse);
     flex: 0 0 auto;
   }
@@ -196,7 +298,7 @@ import Navbar from './Navbar.astro';
 
   .hero__stat-value {
     font-family: var(--font-display);
-    font-size: 24px;
+    font-size: clamp(21px, min(1.82vw, 3.75vh), 38px);
     font-weight: var(--fw-extrabold);
     color: var(--text-inverse);
     line-height: 1;
@@ -205,21 +307,92 @@ import Navbar from './Navbar.astro';
 
   .hero__stat-label {
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: clamp(11.5px, min(0.8vw, 1.65vh), 16px);
     font-weight: var(--fw-semibold);
     color: var(--text-inverse-muted);
     white-space: nowrap;
   }
 
+  /* 45.83% = 880/1920, and bottom is a percentage of the canvas's real
+     height, so the car stays planted on the wedge as the hero grows.
+     Position and anchoring are the composition's fixed reference and do
+     not change.
+     The width now has a second term for low-aspect screens only. The car
+     is sized off the width while a tablet's canvas grows in height, so on
+     a 1366x1024 iPad landscape it was 41% of the height against 54% on a
+     16:9 desktop — the same car reading as a smaller object. The vh term
+     restores that weight (54.4% of the width, 48.4% of the height there).
+     It is solved to equal 45.8333% exactly at 1.5:1, so it is provably
+     inert at every desktop ratio — max() keeps the original value at
+     1920x1080, 1920x780, 1440x900, 1366x768, 2560x1080 and 1512x982 —
+     and it crosses over with no jump. The 58% ceiling stops it reaching
+     the text column on a near-square window. */
   .hero__car {
     position: absolute;
     right: 1.5%;
     bottom: 2.5%;
-    width: 880px;
+    width: max(45.8333%, min(103.1vh - 22.9%, 58%));
     z-index: 4;
     pointer-events: none;
   }
 
+  /* Tablet-landscape territory: wide enough for two columns but far
+     shorter than the 1.6:1 the type scale was tuned against, so the
+     vw-capped sizes leave the block at ~39% of the canvas height with
+     dead navy above and below it. Here the height is the abundant axis,
+     so the middle terms lean on it and the vertical padding gives some
+     of its air back to the type. The vw term stays the ceiling — it is
+     what keeps a 47px headline inside a 315px column at 1024 wide.
+     The lopsided padding is deliberate: the block is still centred in
+     what is left, and the heavier bottom pad lifts it out of the middle
+     so the void lands in the lower left, where the wedge's diagonal is
+     already sweeping through, instead of sitting above the headline. */
+  @media (min-width: 900px) and (max-aspect-ratio: 3/2) {
+    .hero__content {
+      padding-top: clamp(88px, 9vh, 168px);
+      padding-bottom: clamp(40px, 16vh, 180px);
+      gap: clamp(9px, 1.25vh, 20px);
+    }
+
+    .hero__eyebrow { font-size: clamp(19px, min(2.15vw, 3.1vh), 40px); }
+    .hero__headline { font-size: clamp(34px, min(4.5vw, 6.4vh), 92px); }
+    .hero__desc { font-size: clamp(15px, min(1.25vw, 1.8vh), 22px); }
+
+    .hero__cta {
+      padding: clamp(12px, 1.3vh, 18px) clamp(22px, 2.2vw, 38px);
+      min-height: clamp(46px, 4.6vh, 62px);
+      font-size: clamp(15px, min(1.2vw, 1.7vh), 21px);
+    }
+
+    .hero__stats { margin-top: clamp(8px, 1.5vh, 24px); }
+    .hero__stat-value { font-size: clamp(21px, min(2.05vw, 2.9vh), 38px); }
+    .hero__stat-label { font-size: clamp(11.5px, min(0.92vw, 1.3vh), 16px); }
+  }
+
+  /* Between the stacked layout and the width where all four stats fit one
+     row, lay them out 2x2. Left to wrap on its own the flex row breaks
+     3+1, which reads as a mistake rather than a grid.
+     The ceiling is 1240px because that is where the row actually stops
+     fitting now: the column is 35% wide (was 29.17%), so the four stats
+     need 356px of a 380px measure there and only ~364px of 418px on a
+     1366 laptop. The old 1560px ceiling was sized for the narrower
+     column and was forcing a 2x2 onto every laptop for no reason. */
+  @media (min-width: 681px) and (max-width: 1240px) {
+    .hero__stats {
+      display: grid;
+      grid-template-columns: auto auto;
+      justify-content: start;
+    }
+    .hero__stat:nth-child(2n) {
+      border-right: none;
+      padding-right: 0;
+    }
+  }
+
+  /* Below this width there is no room for two columns, so the composition
+     stacks: the wedge drops out and the car sits under the text. The hero
+     is free to grow past the viewport here — legibility outranks fitting
+     a phone screen in one screenful. */
   @media (max-width: 680px) {
     .hero {
       height: auto;
@@ -228,12 +401,8 @@ import Navbar from './Navbar.astro';
     }
 
     .hero__canvas {
-      position: relative;
-      top: auto;
-      left: auto;
-      width: auto;
       height: auto;
-      transform: none;
+      min-height: 0;
     }
 
     .hero__blob-top {
@@ -250,19 +419,33 @@ import Navbar from './Navbar.astro';
     }
 
     .hero__content {
-      position: relative;
       width: auto;
-      height: auto;
+      min-height: 0;
+      gap: 14px;
       padding: 96px var(--gutter-inline) 0;
     }
 
+    /* Fixed sizes rather than the clamps above: the stacked column is far
+       wider than the two-column one, so it wants its own scale — and the
+       vh terms above would read a tall phone as a tall desktop. */
+    .hero__eyebrow { font-size: 26px; }
+    .hero__headline { font-size: 40px; margin: 0; }
+    .hero__desc { font-size: 15px; margin: 4px 0 0; }
+    .hero__stat-value { font-size: 24px; }
+    .hero__stat-label { font-size: 12px; }
+
     .hero__cta {
       align-self: stretch;
+      margin-top: 8px;
+      padding: 15px 24px;
+      min-height: 52px;
+      font-size: var(--fs-body);
     }
 
     .hero__stats {
       flex-wrap: wrap;
       justify-content: center;
+      margin-top: 24px;
       gap: 16px 24px;
     }
     .hero__stat {
@@ -285,21 +468,102 @@ import Navbar from './Navbar.astro';
       margin: 32px auto 0;
     }
   }
-</style>
 
-<script>
-  const DESIGN_WIDTH = 1920;
-  const DESIGN_HEIGHT = 780;
-  const HEIGHT_BUFFER = 8;
+  /* Tablet in portrait, and any window at least as tall as it is wide.
+     Two columns genuinely cannot work at 0.75:1 — the car is 45.83% of
+     the width, which on a 1024x1366 iPad is 23% of the height, so it read
+     as a small object marooned bottom-right while the text sat in its
+     360px floor with 600px of empty navy beside it. So the composition
+     stacks, the same move the phone breakpoint makes, but at tablet scale
+     rather than the phone's fixed 40px headline: this is a 1024px-wide
+     canvas, not a 390px one. The wedge drops out for the same reason it
+     does on a phone — there is no two-column split left for it to divide.
+     Ordered after the low-aspect and 2x2 blocks above so it overrides
+     them; it never meets the phone block, which stops at 680px. */
+  @media (min-width: 681px) and (max-aspect-ratio: 1/1) {
+    .hero {
+      height: auto;
+      min-height: 100vh;
+      padding-bottom: clamp(20px, 3vh, 56px);
+    }
 
-  function updateHeroScale() {
-    const scale = Math.min(
-      window.innerWidth / DESIGN_WIDTH,
-      (window.innerHeight - HEIGHT_BUFFER) / DESIGN_HEIGHT
-    );
-    document.documentElement.style.setProperty('--hero-scale', String(scale));
+    .hero__canvas {
+      height: auto;
+      min-height: 0;
+    }
+
+    .hero__diagonal {
+      display: none;
+    }
+
+    .hero__content {
+      width: auto;
+      min-height: 0;
+      gap: clamp(14px, 1.6vh, 24px);
+      padding: clamp(96px, 15vh, 240px) var(--hero-inline) 0;
+    }
+
+    .hero__eyebrow { font-size: clamp(24px, 3.2vw, 40px); }
+    .hero__headline { font-size: clamp(44px, 7vw, 88px); }
+
+    .hero__desc {
+      margin: clamp(4px, 0.8vh, 12px) 0 0;
+      font-size: clamp(17px, 1.9vw, 24px);
+      max-width: 30em;
+    }
+
+    .hero__cta {
+      align-self: flex-start;
+      margin-top: clamp(8px, 1.2vh, 18px);
+      padding: clamp(14px, 1.1vh, 20px) clamp(26px, 2.8vw, 44px);
+      min-height: clamp(52px, 4vh, 64px);
+      font-size: clamp(16px, 1.55vw, 21px);
+    }
+
+    /* Back to one row: the full canvas width is far more than the four
+       stats need, so the 2x2 from the block above has nothing to solve
+       here. */
+    .hero__stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: clamp(14px, 1.6vh, 24px);
+      margin-top: clamp(16px, 2.2vh, 32px);
+    }
+
+    .hero__stat {
+      align-items: flex-start;
+      text-align: left;
+      min-width: 0;
+      padding-right: clamp(16px, 1.8vw, 28px);
+      border-right: 1px solid var(--border-inverse);
+    }
+    .hero__stat:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+
+    .hero__stat-value { font-size: clamp(26px, 2.6vw, 38px); }
+    .hero__stat-label { font-size: clamp(12px, 1.15vw, 16px); }
+
+    .hero__car {
+      position: relative;
+      inset: auto;
+      display: block;
+      width: min(760px, 82%, 55vh);
+      margin: clamp(20px, 3.5vh, 72px) auto 0;
+    }
   }
 
-  updateHeroScale();
-  window.addEventListener('resize', updateHeroScale);
-</script>
+  @supports (height: 100dvh) {
+    @media (min-width: 681px) and (max-aspect-ratio: 1/1) {
+      .hero { min-height: 100dvh; }
+    }
+  }
+
+  @supports (height: 100dvh) {
+    @media (max-width: 680px) {
+      .hero { min-height: 100dvh; }
+    }
+  }
+</style>
