@@ -28,7 +28,7 @@ const FEATURES = [
 
     <ul class="lv__features">
       {FEATURES.map((f) => (
-        <li class="card card--flat lv__feature">
+        <li class="card card--flat feature-row lv__feature">
           <Icon name={f.icon} size={22} />
           <span>{f.label}</span>
         </li>
@@ -58,18 +58,15 @@ const FEATURES = [
     list-style: none;
   }
 
-  /* Padding propio, más apretado que --card-pad: son etiquetas, no tarjetas
-     de contenido. */
+  /* Deltas sobre .feature-row (global.css) únicamente: padding propio, más
+     apretado que --card-pad porque son etiquetas, no tarjetas de contenido;
+     y un peso y color de texto más fuertes que el feature-row de base.
+     display/align/gap y el color del icono los hereda de .feature-row. */
   .lv__feature {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
     padding: var(--space-5);
-    font-size: var(--fs-body-sm);
     font-weight: var(--fw-bold);
     color: var(--text-strong);
   }
-  .lv__feature > svg { flex: 0 0 auto; color: var(--evir-lime-600); }
 
   .lv__alliance {
     display: flex;
