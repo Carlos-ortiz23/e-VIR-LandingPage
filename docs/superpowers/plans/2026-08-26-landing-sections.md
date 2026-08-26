@@ -57,7 +57,7 @@ Cada task de sección termina con estos cuatro pasos:
 
 1. `pnpm build` sale con código 0.
 2. `grep` sobre `dist/index.html` confirma que el copy y la estructura exigidos están presentes.
-3. El detector de layout no reporta nada: `node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/<Seccion>.astro` devuelve `[]`.
+3. El detector de layout no reporta nada: `node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/<Seccion>.astro` devuelve `[]`.
 4. Captura en el navegador a 1440×900 y 390×844, y **regresión del hero por proporciones** (ver abajo).
 
 El servidor de desarrollo ya corre en `http://localhost:4321`.
@@ -605,7 +605,7 @@ grep -c '<h1' dist/index.html                                  # espera 1
 - [ ] **Step 4: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/LineaVerde.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/LineaVerde.astro
 ```
 
 Esperado: `[]`.
@@ -785,7 +785,7 @@ grep -Ec '320 km|18 kWh|\$[0-9]{3}\.[0-9]{3}' dist/index.html       # espera 0 �
 - [ ] **Step 4: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/Flota.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/Flota.astro
 ```
 
 Esperado: `[]`.
@@ -918,7 +918,7 @@ grep -c 'Propiedad progresiva' dist/index.html # espera 1
 - [ ] **Step 4: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/Modelo.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/Modelo.astro
 ```
 
 Esperado: `[]`.
@@ -1094,7 +1094,7 @@ grep -Ec 'Fundador|Advisor|Operaciones' dist/index.html  # espera 0 — la tarje
 - [ ] **Step 4: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/QuienesSomos.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/QuienesSomos.astro
 ```
 
 Esperado: `[]`.
@@ -1282,7 +1282,7 @@ grep -c 'Países' dist/index.html              # espera 1 — solo el del hero, 
 - [ ] **Step 4: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/Expansion.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/Expansion.astro
 ```
 
 Esperado: `[]`.
@@ -1468,7 +1468,7 @@ test -f dist/assets/evir-mark-lime.png && echo "asset copiado"
 - [ ] **Step 5: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/SiteFooter.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/SiteFooter.astro
 ```
 
 Esperado: `[]`.
@@ -2144,7 +2144,7 @@ Luego, temporalmente, pon `WHATSAPP_NUMBER = '573000000000'`, recarga y comprueb
 - [ ] **Step 5: Detector de layout**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components/SerSocio.astro
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components/SerSocio.astro
 ```
 
 Esperado: `[]`.
@@ -2240,7 +2240,7 @@ Revisar a mano que ningún titular pase de 9 palabras y ningún lead de 28.
 - [ ] **Step 5: Detector y build final**
 
 ```bash
-node .claude/skills/impeccable/scripts/detect.mjs --json --scope layout src/components src/styles
+node "$HOME/.claude/skills/impeccable/scripts/detect.mjs" --json --scope layout src/components src/styles
 pnpm build
 pnpm test
 ```
