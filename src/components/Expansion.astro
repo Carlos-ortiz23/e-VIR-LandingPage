@@ -1,0 +1,146 @@
+---
+import Icon from './Icon.astro';
+
+/* Desviación deliberada del kit de referencia: cerraba con tres StatTile de
+   25 / 200 / 4, que son exactamente los números que el hero ya muestra.
+   Repetirlos dice lo mismo dos veces. La línea de fases aporta lo que el
+   hero no puede dar —el cuándo— en una forma visual distinta. */
+const COUNTRIES = [
+  { name: 'Colombia', detail: 'Sede principal · Barranquilla', active: true },
+  { name: 'Costa Rica', detail: 'Expansión inicial', active: false },
+  { name: 'Panamá', detail: 'Expansión inicial', active: false },
+  { name: 'Paraguay', detail: 'Expansión inicial', active: false },
+];
+
+const PHASES = [
+  { date: 'Diciembre 2026', value: '25', label: 'vehículos en flota' },
+  { date: 'Diciembre 2027', value: '200', label: 'vehículos en flota' },
+];
+---
+<section class="section section--ink" id="expansion" aria-labelledby="expansion-title">
+  <div class="section__inner">
+    <div class="section-head">
+      <span class="evir-eyebrow">Expansión</span>
+      <h2 class="section-head__title" id="expansion-title">
+        Empezamos en Barranquilla. Vamos por Latinoamérica.
+      </h2>
+      <p class="section-head__lead">
+        Operación e inicio de actividades en Barranquilla, Colombia, con un plan
+        de expansión regional por fases.
+      </p>
+    </div>
+
+    <ul class="exp__countries">
+      {COUNTRIES.map((c) => (
+        <li class:list={['card', 'card--ink', 'exp__country', { 'exp__country--active': c.active }]}>
+          <div class="exp__country-head">
+            <Icon name="map-pin" size={18} />
+            <h3 class="exp__country-name">{c.name}</h3>
+          </div>
+          <p class="exp__country-detail">{c.detail}</p>
+        </li>
+      ))}
+    </ul>
+
+    <ol class="exp__phases">
+      {PHASES.map((p) => (
+        <li class="exp__phase">
+          <span class="exp__phase-date">{p.date}</span>
+          <span class="exp__phase-value">{p.value}</span>
+          <span class="exp__phase-label">{p.label}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* Cuatro tarjetas exactas: auto-fit con minmax(200px,1fr) del brief deja
+     una tarjeta huérfana en una fila propia alrededor de ~900px de viewport
+     (ancho de contenido ~810px cabe exactamente 3 columnas de 200px+gap, y
+     sobra una cuarta). Mismo defecto que Modelo.astro ya documentó y
+     corrigió; se aplica la misma solución: columnas fijas en los mismos
+     puntos de quiebre que ya usan Hero/Flota/LineaVerde/Navbar/Modelo (680
+     y 1240) para que 1, 2 o 4 columnas dividan siempre las cuatro tarjetas
+     sin resto. */
+  .exp__countries {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-8);
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 681px) {
+    .exp__countries { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1241px) {
+    .exp__countries { grid-template-columns: repeat(4, 1fr); }
+  }
+  .exp__country { padding: var(--space-5); }
+  /* El único acento lima de la sección: marca el mercado activo. */
+  .exp__country--active { border-color: var(--evir-lime-400); }
+  .exp__country-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-inverse-muted);
+  }
+  .exp__country--active .exp__country-head { color: var(--evir-lime-400); }
+  .exp__country-name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    color: var(--text-inverse);
+  }
+  .exp__country-detail {
+    margin: var(--space-2) 0 0;
+    font-size: var(--fs-body-sm);
+    color: var(--text-inverse-muted);
+  }
+
+  /* Línea de fases: dos hitos con una regla que los une. La regla es
+     estructura, no decoración — indica que hay una secuencia. */
+  .exp__phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-7);
+    margin: 0;
+    padding: var(--space-7) 0 0;
+    border-top: var(--border-hairline) solid var(--border-inverse);
+    list-style: none;
+    counter-reset: phase;
+  }
+  .exp__phase {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'date date' 'value label';
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+  }
+  .exp__phase-date {
+    grid-area: date;
+    margin-bottom: var(--space-2);
+    font-family: var(--font-sans);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--evir-lime-400);
+  }
+  /* Misma familia y peso que las cifras del hero, para que los números de
+     la página lean como un solo sistema. */
+  .exp__phase-value {
+    grid-area: value;
+    font-family: var(--font-display);
+    font-size: var(--fs-display-2);
+    font-weight: var(--fw-extrabold);
+    line-height: 1;
+    letter-spacing: var(--ls-display);
+    color: var(--text-inverse);
+  }
+  .exp__phase-label {
+    grid-area: label;
+    font-size: var(--fs-body-sm);
+    color: var(--text-inverse-muted);
+  }
+</style>
