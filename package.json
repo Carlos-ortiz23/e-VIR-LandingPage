@@ -10,12 +10,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "astro": "^7.2.6"
   },
   "devDependencies": {
-    "lucide-static": "^1.34.0"
+    "lucide-static": "^1.34.0",
+    "vitest": "^4.1.11"
   }
 }
