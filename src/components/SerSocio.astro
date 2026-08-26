@@ -1,0 +1,384 @@
+---
+import Icon from './Icon.astro';
+import { WHATSAPP_NUMBER } from '../config';
+import { INTENT_COPY, INTENT_OPTIONS } from '../lib/leadForm';
+
+/* La primera pregunta usaba, en el kit de referencia, el nombre de una
+   campaña que el cliente retiró de todo el sitio. Ese nombre no debe
+   reinstalarse aquí ni en ningún otro lado: la pregunta se formula sobre el
+   mecanismo (la propiedad progresiva), no sobre esa campaña. */
+const FAQ = [
+  {
+    q: '¿Cómo funciona la propiedad progresiva?',
+    a: 'Con el mismo esfuerzo diario que hoy dedicas a un alquiler, al terminar el plan el vehículo queda a tu nombre.',
+  },
+  {
+    q: '¿Cómo funciona la plataforma?',
+    a: 'Operamos con inteligencia artificial sobre WhatsApp Business y con comisiones bajas, en alianza con PideyDale. No necesitas descargar nada.',
+  },
+  {
+    q: '¿Qué respaldo tiene e-VIR?',
+    a: 'Más de 30 años de experiencia en transporte, Distracon S.A.S. (2002), Viral Trans-E en micromovilidad, e-VIR Investments LLC (Delaware) y acompañamiento de HubBog y la Cámara de Comercio.',
+  },
+  {
+    q: '¿Qué es la Línea Verde?',
+    a: 'Es nuestra línea de vehículos adaptados para personas con discapacidad, con conductores formados en atención inclusiva. Buscamos aliados institucionales para ampliarla.',
+  },
+];
+
+const configured = WHATSAPP_NUMBER.replace(/\D/g, '').length > 0;
+const initial = INTENT_COPY.socio;
+---
+<section class="section" id="socio" aria-labelledby="socio-title">
+  <div class="section__inner ss">
+    <div>
+      <div class="section-head">
+        <span class="evir-eyebrow">Súmate</span>
+        <h2 class="section-head__title" id="socio-title" data-title>{initial.title}</h2>
+        <p class="section-head__lead" data-lead>{initial.lead}</p>
+      </div>
+
+      <div class="ss__faq">
+        {FAQ.map((item, i) => (
+          <div class="ss__faq-item">
+            <h3 class="ss__faq-heading">
+              <button
+                type="button"
+                class="ss__faq-trigger"
+                aria-expanded={i === 0 ? 'true' : 'false'}
+                aria-controls={`faq-panel-${i}`}
+                id={`faq-trigger-${i}`}
+              >
+                <span>{item.q}</span>
+                <span class="ss__faq-glyph" aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div
+              class="ss__faq-panel"
+              id={`faq-panel-${i}`}
+              role="region"
+              aria-labelledby={`faq-trigger-${i}`}
+              hidden={i !== 0}
+            >
+              <p>{item.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <form class="card ss__form" data-form novalidate>
+      <!-- role="group" con aria-pressed, no role="tablist": estos botones no
+           cambian de panel, mutan este mismo formulario. Un tablist obliga a
+           navegación por flechas y a asociar tabpanels; declararlo sin eso es
+           peor que no poner ARIA. -->
+      <div class="ss__tabs" role="group" aria-label="Tipo de solicitud">
+        <button type="button" class="ss__tab" aria-pressed="true" data-intent="socio">
+          Ser socio
+        </button>
+        <button type="button" class="ss__tab" aria-pressed="false" data-intent="conductor">
+          Ser conductor
+        </button>
+      </div>
+
+      <label class="ss__field">
+        <span class="ss__label">Nombre completo</span>
+        <input class="ss__input" name="nombre" type="text" autocomplete="name" required placeholder="María Fernanda Rojas" />
+      </label>
+
+      <label class="ss__field">
+        <span class="ss__label">Correo</span>
+        <span class="ss__input-wrap">
+          <Icon name="mail" size={18} />
+          <input class="ss__input" name="correo" type="email" autocomplete="email" required placeholder="tu@correo.com" />
+        </span>
+      </label>
+
+      <label class="ss__field">
+        <span class="ss__label">WhatsApp</span>
+        <span class="ss__input-wrap">
+          <Icon name="message-circle" size={18} />
+          <input class="ss__input" name="whatsapp" type="tel" autocomplete="tel" required placeholder="+57 300 000 0000" />
+        </span>
+      </label>
+
+      <label class="ss__field">
+        <span class="ss__label" data-detalle-label>{initial.detalleLabel}</span>
+        <select class="ss__input ss__select" name="detalle" data-detalle>
+          {INTENT_OPTIONS.socio.map((o) => <option value={o}>{o}</option>)}
+        </select>
+      </label>
+
+      <label class="ss__consent">
+        <input type="checkbox" name="consent" data-consent />
+        <span>
+          Autorizo el tratamiento de mis datos.
+          <span class="ss__consent-note">Puedes revocarlo en cualquier momento.</span>
+        </span>
+      </label>
+
+      <button type="submit" class="btn btn--primary btn--lg ss__submit" data-submit disabled>
+        <span data-submit-label>{initial.submit}</span>
+      </button>
+
+      {!configured && (
+        <p class="ss__pending" role="status">
+          El canal de WhatsApp todavía no está configurado. Escríbenos mientras tanto
+          al correo de contacto.
+        </p>
+      )}
+    </form>
+  </div>
+
+  <script>
+    /* Script empaquetado, no is:inline: así puede importar de verdad el
+       módulo que los tests cubren, en vez de duplicar la lógica en cliente.
+       Sin framework, igual que el toggle del nav. */
+    import { WHATSAPP_NUMBER } from '../config';
+    import { buildWhatsAppUrl, type Intent } from '../lib/whatsapp';
+    import { INTENT_COPY, INTENT_OPTIONS } from '../lib/leadForm';
+
+    const form = document.querySelector<HTMLFormElement>('[data-form]');
+
+    if (form) {
+      const section = form.closest('section')!;
+      const titleEl = section.querySelector('[data-title]')!;
+      const leadEl = section.querySelector('[data-lead]')!;
+      const detalleLabel = form.querySelector('[data-detalle-label]')!;
+      const detalle = form.querySelector<HTMLSelectElement>('[data-detalle]')!;
+      const consent = form.querySelector<HTMLInputElement>('[data-consent]')!;
+      const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+      const submitLabel = form.querySelector('[data-submit-label]')!;
+      const tabs = [...form.querySelectorAll<HTMLButtonElement>('.ss__tab')];
+      const configured = WHATSAPP_NUMBER.replace(/\D/g, '').length > 0;
+
+      let intent: Intent = 'socio';
+
+      const syncSubmit = () => {
+        submit.disabled = !consent.checked || !configured;
+      };
+
+      const applyIntent = (next: Intent) => {
+        intent = next;
+        const c = INTENT_COPY[intent];
+        titleEl.textContent = c.title;
+        leadEl.textContent = c.lead;
+        detalleLabel.textContent = c.detalleLabel;
+        submitLabel.textContent = c.submit;
+        detalle.replaceChildren(
+          ...INTENT_OPTIONS[intent].map((o) => {
+            const opt = document.createElement('option');
+            opt.value = o;
+            opt.textContent = o;
+            return opt;
+          })
+        );
+        tabs.forEach((t) =>
+          t.setAttribute('aria-pressed', String(t.dataset.intent === intent))
+        );
+      };
+
+      tabs.forEach((t) => {
+        t.addEventListener('click', () => applyIntent(t.dataset.intent as Intent));
+      });
+
+      consent.addEventListener('change', syncSubmit);
+      syncSubmit();
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.reportValidity()) return;
+        const data = new FormData(form);
+        const url = buildWhatsAppUrl(WHATSAPP_NUMBER, intent, {
+          nombre: String(data.get('nombre') ?? ''),
+          correo: String(data.get('correo') ?? ''),
+          whatsapp: String(data.get('whatsapp') ?? ''),
+          detalle: String(data.get('detalle') ?? ''),
+        });
+        if (url) window.open(url, '_blank', 'noopener');
+      });
+
+      /* Acordeón: uno abierto a la vez. aria-expanded y hidden se mueven
+         siempre juntos. */
+      const triggers = [
+        ...section.querySelectorAll<HTMLButtonElement>('.ss__faq-trigger'),
+      ];
+      triggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => {
+          const wasOpen = trigger.getAttribute('aria-expanded') === 'true';
+          triggers.forEach((t) => {
+            t.setAttribute('aria-expanded', 'false');
+            const panel = document.getElementById(t.getAttribute('aria-controls')!);
+            if (panel) panel.hidden = true;
+          });
+          if (!wasOpen) {
+            trigger.setAttribute('aria-expanded', 'true');
+            const panel = document.getElementById(
+              trigger.getAttribute('aria-controls')!
+            );
+            if (panel) panel.hidden = false;
+          }
+        });
+      });
+    }
+  </script>
+</section>
+
+<style>
+  .ss {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(var(--space-7), 4vw, var(--space-9));
+    align-items: start;
+  }
+  .ss .section-head { max-width: none; margin-bottom: var(--space-7); }
+
+  /* ---- FAQ ---- */
+  .ss__faq { display: flex; flex-direction: column; gap: var(--space-3); }
+  .ss__faq-item {
+    border: var(--border-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    background: var(--surface-card);
+  }
+  .ss__faq-heading { margin: 0; }
+  .ss__faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5);
+    width: 100%;
+    padding: var(--space-5) var(--space-6);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-heading);
+    color: var(--text-strong);
+  }
+  /* El glifo rota 45° hasta ser una ×. Es una de las dos marcas mecánicas
+     que el sistema permite en unicode. */
+  .ss__faq-glyph {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-muted);
+    color: var(--evir-navy-950);
+    font-size: 18px;
+    line-height: 1;
+    transition: transform var(--dur-base) var(--ease-out),
+                background var(--dur-base) var(--ease-standard);
+  }
+  .ss__faq-trigger[aria-expanded='true'] .ss__faq-glyph {
+    transform: rotate(45deg);
+    background: var(--surface-lime);
+  }
+  .ss__faq-panel { padding: 0 var(--space-6) var(--space-6); }
+  .ss__faq-panel p {
+    margin: 0;
+    max-width: 62ch;
+    font-size: var(--fs-body);
+    color: var(--text-muted);
+  }
+
+  /* ---- Form ---- */
+  .ss__form { display: flex; flex-direction: column; gap: var(--space-5); }
+
+  .ss__tabs {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--surface-muted);
+  }
+  .ss__tab {
+    padding: 8px 18px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-bold);
+    color: var(--text-body);
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+  }
+  /* Seleccionado es navy sólido, nunca lima: regla del sistema para chips. */
+  .ss__tab[aria-pressed='true'] {
+    background: var(--action-secondary-bg);
+    color: var(--action-secondary-fg);
+  }
+
+  .ss__field { display: flex; flex-direction: column; gap: var(--space-2); }
+  .ss__label {
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--text-body);
+  }
+
+  .ss__input-wrap { position: relative; display: block; }
+  .ss__input-wrap > svg {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+  .ss__input-wrap .ss__input { padding-left: 42px; }
+
+  .ss__input {
+    width: 100%;
+    padding: 13px 16px;
+    border: var(--border-emphasis) solid var(--border-default);
+    border-radius: var(--radius-input);
+    background: var(--surface-card);
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    color: var(--text-body);
+  }
+  .ss__input::placeholder { color: var(--text-subtle); }
+  .ss__input:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    box-shadow: var(--shadow-ring-focus);
+  }
+
+  /* Se conserva el caret nativo del navegador a propósito: con
+     appearance:none el select se quedaba sin ningún indicador de que es
+     desplegable. El sistema permite el glifo ▾ como sustituto, pero el
+     nativo ya es accesible y consistente por plataforma. */
+  .ss__select { padding-right: var(--space-5); }
+
+  .ss__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--fs-body-sm);
+    color: var(--text-body);
+  }
+  .ss__consent input { margin-top: 3px; accent-color: var(--evir-lime-500); }
+  .ss__consent-note { display: block; color: var(--text-muted); }
+
+  .ss__submit { width: 100%; }
+  .ss__submit:disabled {
+    background: var(--action-disabled-bg);
+    border-color: var(--action-disabled-bg);
+    color: var(--action-disabled-fg);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .ss__pending {
+    margin: 0;
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+  }
+</style>
