@@ -1,0 +1,122 @@
+---
+import Icon from './Icon.astro';
+
+/* La tarjeta de equipo y advisors del kit de referencia queda fuera: no hay
+   nombres ni retratos, y el propio kit la cerraba con un "Pendiente:
+   nombres, cargos y fotos". Cuatro avatares grises leen como sitio a medio
+   terminar. Entra cuando exista el material. */
+const CREDENTIALS = [
+  {
+    icon: 'building-2',
+    title: 'Distracon S.A.S.',
+    body: 'Compañía creada en 2002. Respaldo operativo y financiero del proyecto.',
+  },
+  {
+    icon: 'bike',
+    title: 'Viral Trans-E',
+    body: 'Experiencia en micromovilidad sostenible con bicicletas eléctricas.',
+  },
+  {
+    icon: 'globe',
+    title: 'e-VIR Investments LLC',
+    body: 'Sociedad registrada en Delaware, con operación en Florida, EE. UU.',
+  },
+];
+
+const BACKING = [
+  { icon: 'rocket', label: 'En proceso de aceleración con HubBog, Colombia' },
+  { icon: 'graduation-cap', label: 'Equipo en nivel intermedio de máster en Inteligencia Artificial' },
+  { icon: 'landmark', label: 'Con el apoyo de la Cámara de Comercio' },
+  { icon: 'users', label: 'Red de inversionistas nacional e internacional' },
+];
+---
+<section class="section section--sunken" id="quienes-somos" aria-labelledby="quienes-somos-title">
+  <div class="section__inner qs">
+    <div>
+      <div class="section-head">
+        <span class="evir-eyebrow">Quiénes somos</span>
+        <h2 class="section-head__title" id="quienes-somos-title">
+          Más de 30 años moviendo a Barranquilla
+        </h2>
+        <p class="section-head__lead">
+          e-VIR nace del sector transporte, no de una presentación. Nuestro equipo
+          lleva más de tres décadas operando transporte y micromovilidad
+          sostenible con bicicletas eléctricas.
+        </p>
+      </div>
+
+      <ul class="qs__credentials">
+        {CREDENTIALS.map((c) => (
+          <li class="card qs__credential">
+            <span class="icon-plate icon-plate--sm"><Icon name={c.icon} size={19} /></span>
+            <div>
+              <h3 class="qs__credential-title">{c.title}</h3>
+              <p class="qs__credential-body">{c.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="card qs__backing">
+      <span class="evir-eyebrow">Respaldo y aceleración</span>
+      <ul class="qs__backing-list">
+        {BACKING.map((b) => (
+          <li class="feature-row"><Icon name={b.icon} size={18} />{b.label}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .qs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(var(--space-7), 5vw, var(--space-10));
+    align-items: start;
+  }
+
+  .qs__credentials {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Padding más apretado que --card-pad: son filas de credencial, no
+     tarjetas de contenido. */
+  .qs__credential {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+  .qs__credential-title { font-size: var(--fs-body); }
+  .qs__credential-body {
+    margin: 4px 0 0;
+    font-size: var(--fs-body-sm);
+    color: var(--text-muted);
+  }
+
+  .qs__backing {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+  }
+  .qs__backing-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* La cabecera de sección solo ocupa media rejilla aquí, así que no
+     necesita su medida de 680px. */
+  .qs .section-head { max-width: none; margin-bottom: var(--space-7); }
+</style>
