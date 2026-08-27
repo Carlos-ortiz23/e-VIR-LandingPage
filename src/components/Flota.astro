@@ -1,24 +1,25 @@
 ---
-/* Reusa la misma ruta que el hero a propósito: el navegador ya la tiene en
-   caché, así que la segunda aparición no cuesta una descarga. El
-   tratamiento es distinto —panel ink, centrado, ficha de producto— para que
-   no lea como el hero repetido.
-   Las especificaciones son SOLO cualitativas: no hay cifras verificadas de
-   autonomía, batería ni precio, y el proyecto no inventa cifras. */
 const SPECS = [
-  { value: 'Automático', label: 'Transmisión' },
-  { value: '100% eléctrico', label: 'Motor' },
-  { value: 'Nuevo', label: 'Estado' },
-  { value: 'Flota propia', label: 'Titularidad' },
+  { value: "Automático", label: "Transmisión" },
+  { value: "100% eléctrico", label: "Motor" },
+  { value: "Nuevo", label: "Estado" },
+  { value: "Flota propia", label: "Titularidad" },
 ];
 ---
-<section class="section section--sunken" id="flota" aria-labelledby="flota-title">
+
+<section
+  class="section section--sunken"
+  id="flota"
+  aria-labelledby="flota-title"
+>
   <div class="section__inner">
     <div class="section-head">
       <span class="evir-eyebrow">Flota</span>
+
       <h2 class="section-head__title" id="flota-title">
         Somos propietarios de nuestra propia flota
       </h2>
+
       <p class="section-head__lead">
         No intermediamos vehículos ajenos: los vehículos son nuestros, nuevos,
         eléctricos y automáticos. Eso nos permite garantizar calidad,
@@ -27,24 +28,45 @@ const SPECS = [
     </div>
 
     <div class="card card--ink flota__panel">
-      <img
-        class="flota__car"
-        src="/assets/carro-e10x.png"
-        alt="JAC E10X, el vehículo de la flota de e-VIR"
-        loading="lazy"
-        decoding="async"
-        width="1536"
-        height="1024"
-      />
+      <!-- IMAGEN PRINCIPAL DE LA FLOTA -->
+      <div class="flota__visual">
+        <img
+          class="flota__image"
+          src="/assets/e-vir-flota-computer.png"
+          alt="Flota de cinco vehículos JAC E10X eléctricos de e-VIR"
+          loading="lazy"
+          decoding="async"
+          width="1536"
+          height="1024"
+        />
+      </div>
+
+      <!-- INFORMACIÓN DEL VEHÍCULO -->
       <div class="flota__meta">
-        <h3 class="flota__name">JAC E10X</h3>
+        <div class="flota__intro">
+          <div>
+            <span class="flota__eyebrow">Nuestra flota</span>
+
+            <h3 class="flota__name">JAC E10X</h3>
+          </div>
+
+          <p class="flota__description">
+            Movilidad eléctrica, eficiente y confiable para una nueva generación
+            de conductores.
+          </p>
+        </div>
+
+        <!-- ESPECIFICACIONES -->
         <dl class="flota__specs">
-          {SPECS.map((s) => (
-            <div class="flota__spec">
-              <dt class="flota__spec-label">{s.label}</dt>
-              <dd class="evir-data flota__spec-value">{s.value}</dd>
-            </div>
-          ))}
+          {
+            SPECS.map((s) => (
+              <div class="flota__spec">
+                <dt class="flota__spec-label">{s.label}</dt>
+
+                <dd class="evir-data flota__spec-value">{s.value}</dd>
+              </div>
+            ))
+          }
         </dl>
       </div>
     </div>
@@ -52,79 +74,270 @@ const SPECS = [
 </section>
 
 <style>
-  /* Deltas sobre .card/.card--ink (global.css) únicamente: el panel de
-     producto necesita su propio ritmo vertical, un radio de "panel" en vez
-     del de tarjeta, y más aire que --card-pad. Fondo, borde y color de
-     encabezado los hereda de .card--ink. */
+  /* =========================================================
+     FLOTA
+     ========================================================= */
+
   .flota__panel {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-6);
-    padding: clamp(var(--space-7), 4vw, var(--space-11));
+    gap: clamp(var(--space-7), 5vw, var(--space-11));
+
+    padding: clamp(var(--space-4), 2.5vw, var(--space-7));
+
     border-radius: var(--radius-panel);
+    overflow: hidden;
   }
 
-  /* Una sola expresión monótona en todo el rango, en vez de un porcentaje
-     de escritorio y otro de móvil separados por el breakpoint de 680px:
-     esa pareja producía un salto no monótono (el coche encogía justo por
-     encima de 680px y no recuperaba tamaño hasta ~880px). 88% le da
-     presencia real en un teléfono angosto; el tope de 560px es el mismo
-     que antes y sigue siendo el que manda en el panel a su ancho máximo
-     (ronda el 60% del ancho de contenido del panel ahí), bastante menor
-     que en el hero, donde el coche llega al 45% del viewport completo. */
-  .flota__car {
-    width: min(88%, 560px);
-    height: auto;
+  /* =========================================================
+     IMAGEN
+     ========================================================= */
+
+  .flota__visual {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    border-radius: calc(var(--radius-panel) - var(--space-2));
+
+    background: var(--surface-ink);
   }
+
+  .flota__image {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    aspect-ratio: 3 / 2;
+
+    object-fit: cover;
+    object-position: center;
+
+    /*
+     * Evita que la imagen se vea como una fotografía
+     * independiente pegada dentro del panel.
+     */
+    transform: scale(1.001);
+
+    transition: transform 700ms cubic-bezier(0.2, 0.65, 0.2, 1);
+  }
+
+  .flota__visual:hover .flota__image {
+    transform: scale(1.015);
+  }
+
+  /* =========================================================
+     META
+     ========================================================= */
 
   .flota__meta {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-5);
+    gap: var(--space-7);
+
     width: 100%;
+
+    padding-inline: clamp(var(--space-2), 2vw, var(--space-6));
+    padding-bottom: var(--space-3);
   }
 
-  /* Único delta sobre el h3 base (base.css): tamaño. Familia, peso y color
-     ya llegan del selector de heading global y de .card--ink h3. */
-  .flota__name {
-    font-size: var(--fs-h2);
+  /* =========================================================
+     INTRO
+     ========================================================= */
+
+  .flota__intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-7);
   }
 
-  .flota__specs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--space-5);
-    width: 100%;
-    max-width: 720px;
-    margin: 0;
-    padding-top: var(--space-6);
-    border-top: var(--border-hairline) solid var(--border-inverse);
-    text-align: center;
-  }
+  .flota__eyebrow {
+    display: block;
 
-  .flota__spec { display: flex; flex-direction: column; gap: var(--space-1); }
+    margin-bottom: var(--space-2);
 
-  .flota__spec-label {
     font-size: var(--fs-caption);
     font-weight: var(--fw-semibold);
+
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
+
     color: var(--text-inverse-muted);
   }
 
-  /* .evir-data (base.css) ya da la fuente mono y las cifras tabulares que
-     pide el sistema para datos; aquí solo lo que le falta: tamaño, peso y
-     color sobre el panel ink. */
-  .flota__spec-value {
+  .flota__name {
     margin: 0;
-    font-size: var(--fs-body);
-    font-weight: var(--fw-semibold);
+
+    font-size: var(--fs-h2);
+    line-height: 1;
+
     color: var(--text-inverse);
   }
 
+  .flota__description {
+    max-width: 420px;
+
+    margin: 0;
+
+    font-size: var(--fs-body);
+    line-height: 1.55;
+
+    color: var(--text-inverse-muted);
+  }
+
+  /* =========================================================
+     ESPECIFICACIONES
+     ========================================================= */
+
+  .flota__specs {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    width: 100%;
+    margin: 0;
+    padding: var(--space-6) 0 0;
+
+    border-top: var(--border-hairline) solid var(--border-inverse);
+
+    text-align: left;
+  }
+
+  .flota__spec {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+
+    min-width: 0;
+
+    padding-inline: var(--space-5);
+
+    border-right: var(--border-hairline) solid var(--border-inverse);
+  }
+
+  .flota__spec:first-child {
+    padding-left: 0;
+  }
+
+  .flota__spec:last-child {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .flota__spec-label {
+    margin: 0;
+
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-semibold);
+
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+
+    color: var(--text-inverse-muted);
+  }
+
+  .flota__spec-value {
+    margin: 0;
+
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+
+    color: var(--text-inverse);
+  }
+
+  /* =========================================================
+     TABLET
+     ========================================================= */
+
+  @media (max-width: 900px) {
+    .flota__intro {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .flota__description {
+      max-width: 600px;
+    }
+
+    .flota__specs {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: var(--space-5);
+    }
+
+    .flota__spec:nth-child(2) {
+      padding-right: 0;
+      border-right: 0;
+    }
+
+    .flota__spec:nth-child(3) {
+      padding-left: 0;
+    }
+
+    .flota__spec:nth-child(3),
+    .flota__spec:nth-child(4) {
+      padding-top: var(--space-5);
+
+      border-top: var(--border-hairline) solid var(--border-inverse);
+    }
+
+    .flota__spec:nth-child(4) {
+      padding-right: 0;
+      border-right: 0;
+    }
+  }
+
+  /* =========================================================
+     MOBILE
+     ========================================================= */
+
   @media (max-width: 680px) {
-    .flota__specs { grid-template-columns: 1fr 1fr; text-align: left; }
+    .flota__panel {
+      gap: var(--space-6);
+
+      padding: var(--space-3);
+    }
+
+    .flota__visual {
+      border-radius: var(--radius-panel);
+    }
+
+    .flota__image {
+      /*
+       * En móvil no forzamos un recorte agresivo.
+       * Así siguen apareciendo los cinco vehículos.
+       */
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .flota__meta {
+      gap: var(--space-6);
+
+      padding-inline: var(--space-2);
+    }
+
+    .flota__name {
+      font-size: var(--fs-h3);
+    }
+
+    .flota__description {
+      font-size: var(--fs-body);
+    }
+
+    .flota__specs {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .flota__spec {
+      padding-inline: var(--space-3);
+    }
+
+    .flota__spec:nth-child(3) {
+      padding-left: 0;
+    }
   }
 </style>
