@@ -4,7 +4,6 @@ export default defineConfig({
   // Las redes sociales exigen URLs absolutas en og:image y og:url: una ruta
   // relativa no la resuelve ningún scraper. Astro las construye a partir de
   // este valor, así que el dominio real debe vivir aquí.
-  // TODO: sustituir por el dominio definitivo cuando esté publicado.
-  site: 'https://e-vir-landingpage.pages.dev',
+  site: 'https://evirlatam.com',
   vite: { build: { cssTarget: 'safari15' } },
 });
