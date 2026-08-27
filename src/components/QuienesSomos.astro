@@ -22,68 +22,51 @@ const CREDENTIALS = [
     body: 'Sociedad registrada en Delaware, con operación en Florida, EE. UU.',
   },
 ];
-
-const BACKING = [
-  { icon: 'rocket', label: 'En proceso de aceleración con HubBog, Colombia' },
-  { icon: 'graduation-cap', label: 'Equipo en nivel intermedio de máster en Inteligencia Artificial' },
-  { icon: 'landmark', label: 'Con el apoyo de la Cámara de Comercio' },
-  { icon: 'users', label: 'Red de inversionistas nacional e internacional' },
-];
 ---
 <section class="section section--sunken" id="quienes-somos" aria-labelledby="quienes-somos-title">
-  <div class="section__inner qs">
-    <div>
-      <div class="section-head">
-        <span class="evir-eyebrow">Quiénes somos</span>
-        <h2 class="section-head__title" id="quienes-somos-title">
-          Más de 30 años moviendo a Barranquilla
-        </h2>
-        <p class="section-head__lead">
-          e-VIR nace del sector transporte, no de una presentación. Nuestro equipo
-          lleva más de tres décadas operando transporte y micromovilidad
-          sostenible con bicicletas eléctricas.
-        </p>
-      </div>
-
-      <ul class="qs__credentials">
-        {CREDENTIALS.map((c) => (
-          <li class="card qs__credential">
-            <span class="icon-plate icon-plate--sm"><Icon name={c.icon} size={19} /></span>
-            <div>
-              <h3 class="qs__credential-title">{c.title}</h3>
-              <p class="qs__credential-body">{c.body}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+  <div class="section__inner">
+    <div class="section-head">
+      <span class="evir-eyebrow">Quiénes somos</span>
+      <h2 class="section-head__title" id="quienes-somos-title">
+        Más de 30 años moviendo a Barranquilla
+      </h2>
+      <p class="section-head__lead">
+        e-VIR nace del sector transporte, no de una presentación. Nuestro equipo
+        lleva más de tres décadas operando transporte y micromovilidad
+        sostenible con bicicletas eléctricas.
+      </p>
     </div>
 
-    <div class="card qs__backing">
-      <span class="evir-eyebrow">Respaldo y aceleración</span>
-      <ul class="qs__backing-list">
-        {BACKING.map((b) => (
-          <li class="feature-row"><Icon name={b.icon} size={18} />{b.label}</li>
-        ))}
-      </ul>
-    </div>
+    <ul class="qs__credentials">
+      {CREDENTIALS.map((c) => (
+        <li class="card qs__credential">
+          <span class="icon-plate icon-plate--sm"><Icon name={c.icon} size={19} /></span>
+          <div>
+            <h3 class="qs__credential-title">{c.title}</h3>
+            <p class="qs__credential-body">{c.body}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
 <style>
-  .qs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: clamp(var(--space-7), 5vw, var(--space-10));
-    align-items: start;
-  }
-
+  /* Tres tarjetas exactas, sin la de respaldo que ocupaba la otra mitad de
+     la rejilla: una sola columna solo divide en 1 o 3 sin resto, así que el
+     quiebre salta directo de 1 a 3 columnas y nunca pasa por 2 (eso dejaría
+     una tarjeta huérfana en su propia fila). El punto de quiebre es el
+     mismo 680px que ya usan Hero/Flota/LineaVerde/Navbar/Modelo/Expansion. */
   .qs__credentials {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  @media (min-width: 681px) {
+    .qs__credentials { grid-template-columns: repeat(3, 1fr); }
   }
 
   /* Padding más apretado que --card-pad: son filas de credencial, no
@@ -100,23 +83,4 @@ const BACKING = [
     font-size: var(--fs-body-sm);
     color: var(--text-muted);
   }
-
-  .qs__backing {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--space-6);
-  }
-  .qs__backing-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  /* La cabecera de sección solo ocupa media rejilla aquí, así que no
-     necesita su medida de 680px. */
-  .qs .section-head { max-width: none; margin-bottom: var(--space-7); }
 </style>
