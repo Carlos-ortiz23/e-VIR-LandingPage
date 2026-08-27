@@ -52,21 +52,23 @@ const CREDENTIALS = [
 </section>
 
 <style>
-  /* Tres tarjetas exactas, sin la de respaldo que ocupaba la otra mitad de
-     la rejilla: una sola columna solo divide en 1 o 3 sin resto, así que el
-     quiebre salta directo de 1 a 3 columnas y nunca pasa por 2 (eso dejaría
-     una tarjeta huérfana en su propia fila). El punto de quiebre es el
-     mismo 680px que ya usan Hero/Flota/LineaVerde/Navbar/Modelo/Expansion. */
+  /* Tres tarjetas, pero un salto directo de 1 a 3 columnas a 681px (la regla
+     original) deja el tramo tablet — ~681 a ~1000px — con columnas de
+     ~190px donde "e-VIR Investments LLC" fuerza el track y el cuerpo
+     envuelve en 7 líneas de ~14 caracteres. LineaVerde resolvió el mismo
+     problema de tres ítems con auto-fit en vez de un breakpoint fijo,
+     dejando que el layout pase por un estado 2+1 en vez de forzar 3
+     columnas angostas; se repite esa solución aquí. minmax(280px, 1fr) es
+     el ancho mínimo bajo el cual el cuerpo deja de leer cómodo: da 1
+     columna en móvil, 2 (2+1) durante la banda tablet y 3 solo desde
+     ~1000px, donde cada tarjeta tiene sitio real para su texto. */
   .qs__credentials {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;
-  }
-  @media (min-width: 681px) {
-    .qs__credentials { grid-template-columns: repeat(3, 1fr); }
   }
 
   /* Padding más apretado que --card-pad: son filas de credencial, no

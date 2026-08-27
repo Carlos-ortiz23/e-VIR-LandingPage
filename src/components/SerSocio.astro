@@ -123,8 +123,7 @@ const initial = INTENT_COPY.socio;
 
       {!configured && (
         <p class="ss__pending" role="status">
-          El canal de WhatsApp todavía no está configurado. Escríbenos mientras tanto
-          al correo de contacto.
+          Estamos activando el canal de WhatsApp. Vuelve pronto para escribirnos por ahí.
         </p>
       )}
     </form>
@@ -195,7 +194,13 @@ const initial = INTENT_COPY.socio;
           whatsapp: String(data.get('whatsapp') ?? ''),
           detalle: String(data.get('detalle') ?? ''),
         });
-        if (url) window.open(url, '_blank', 'noopener');
+        if (url) {
+          const popup = window.open(url, '_blank', 'noopener');
+          // Popup blockers and in-app webviews (Instagram, Facebook) can
+          // return null instead of opening a tab; fall back to same-tab
+          // navigation so the form always does *something*.
+          if (!popup) window.location.href = url;
+        }
       });
 
       /* Acordeón: uno abierto a la vez. aria-expanded y hidden se mueven
@@ -324,7 +329,10 @@ const initial = INTENT_COPY.socio;
   }
 
   .ss__input-wrap { position: relative; display: block; }
-  .ss__input-wrap > svg {
+  /* :global() needed here: the <svg> comes from Icon.astro, so Astro never
+     stamps it with this file's data-astro-cid attribute and the scoped
+     selector would silently never match. */
+  .ss__input-wrap > :global(svg) {
     position: absolute;
     top: 50%;
     left: 14px;
