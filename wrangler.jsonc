@@ -1,0 +1,12 @@
+{
+  // Landing estática: no hay Worker que ejecutar, solo archivos que servir.
+  // Sin este archivo, `wrangler deploy` entra en autoconfiguración y lanza
+  // `astro add cloudflare`, que instalaría el adapter SSR y convertiría el
+  // sitio en una app sobre Workers — un cambio innecesario para una página
+  // que Astro ya compila a HTML estático.
+  "name": "e-vir-landingpage",
+  "compatibility_date": "2026-08-27",
+  "assets": {
+    "directory": "./dist"
+  }
+}
