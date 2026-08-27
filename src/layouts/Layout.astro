@@ -11,20 +11,50 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  description?: string;
 }
 
-const { title = 'E-VIR Latam' } = Astro.props;
+const {
+  title = 'E-VIR Latam',
+  description = 'e-VIR es una flota propia de vehículos eléctricos en Barranquilla que, con un modelo de propiedad progresiva, permite al conductor terminar siendo dueño de su carro.',
+} = Astro.props;
+
+/* WhatsApp, Facebook y X descartan las rutas relativas: og:image y og:url
+   tienen que ser absolutas o la vista previa sale sin imagen. Astro las
+   construye desde el `site` de astro.config.mjs. */
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/assets/og-evir.jpg', Astro.site);
+const ogImageAlt = 'El pájaro de e-VIR, la marca de la compañía, sobre fondo azul noche';
 ---
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="e-VIR es una flota propia de vehículos eléctricos en Barranquilla que, con un modelo de propiedad progresiva, permite al conductor terminar siendo dueño de su carro."
-    />
-    <link rel="icon" href="/assets/evir-icon.jpg" type="image/jpeg" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/assets/evir-icon.jpg" type="image/jpeg" />
+    <meta name="theme-color" content="#0b1024" />
+
+    <!-- Open Graph: lo que leen WhatsApp, Facebook, LinkedIn y Telegram. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="e-VIR" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+
+    <!-- X/Twitter no lee Open Graph para la tarjeta grande; necesita las suyas. -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
   </head>
   <body>
     <slot />
